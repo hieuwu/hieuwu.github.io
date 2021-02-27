@@ -159,7 +159,7 @@ sup {
 }
 
 a {
-  color: #F5DF4D;
+  color: #0F4C81;
   text-decoration: none;
   background-color: transparent;
 }
@@ -6097,7 +6097,7 @@ a.close.disabled {
 }
 
 .bg-primary {
-  background-color: #F5DF4D !important;
+  background-color: #0F4C81 !important;
 }
 
 a.bg-primary:hover, a.bg-primary:focus,
@@ -9799,7 +9799,7 @@ button.bg-dark:focus {
 }
 
 .text-primary {
-  color: #F5DF4D !important;
+  color: #0F4C81 !important;
 }
 
 a.text-primary:hover, a.text-primary:focus {
@@ -10100,7 +10100,7 @@ p.lead {
   margin-right: 0;
 }
 .social-icons .social-icon:hover {
-  background-color: #F5DF4D;
+  background-color: #0F4C81;
 }
 
 .dev-icons {
