@@ -1,0 +1,201 @@
+/* Cascade order. Astryx layers first, then this site's theme overrides.
+   Tailwind v3 emits unlayered CSS, which always outranks layered CSS, so
+   utilities reliably win over Astryx component styles. */
+@layer reset, astryx-base, astryx-theme, portfolio-theme;
+
+@import '@astryxdesign/core/reset.css';
+@import '@astryxdesign/core/astryx.css';
+@import '@astryxdesign/theme-neutral/theme.css';
+@import './theme-ocean.css';
+
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   Base document
+   ========================================================================== */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background-color: var(--color-background-body);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--surf-500);
+  color: #00141a;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-text-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-inner);
+}
+
+/* Thin, theme-aware scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-emphasized) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-emphasized);
+  border-radius: var(--radius-full);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+/* ==========================================================================
+   Reusable primitives
+   ========================================================================== */
+
+@layer components {
+  /* Small uppercase technical label used above every section heading */
+  .eyebrow {
+    @apply font-mono text-2xs uppercase tracking-[0.18em] text-accent;
+  }
+
+  /* The site's default card surface */
+  .surface-card {
+    background-color: var(--color-background-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-container);
+  }
+
+  /* Hairline that fades out at both ends: used as section separators */
+  .rule-fade {
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-border) 15%,
+      var(--color-border) 85%,
+      transparent
+    );
+  }
+}
+
+/* Flat decorative shapes. Solid fills, often bled off their container's edges so
+   only an arc shows, no blur, no gradient, so the content stays the loudest
+   thing on screen. Radius is left to the utility classes: this rule sits after
+   `@tailwind utilities`, so setting it here would beat `rounded-*`. */
+.shape {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Oversized brand mark sitting behind a panel's content.
+   NB: `opacity` can't use light-dark(), that function only resolves to a
+   <color>, so a numeric argument makes the whole declaration invalid and the
+   mark renders at full strength. The per-scheme value comes from a custom
+   property set in theme-ocean.css instead. */
+.watermark {
+  position: absolute;
+  pointer-events: none;
+  opacity: var(--watermark-opacity, 0.07);
+}
+
+/* ---------------------------------------------------------------------------
+   Backdrop motion
+   ---------------------------------------------------------------------------
+   These animate the individual `translate` / `rotate` properties rather than
+   `transform`. Tailwind's `rotate-[14deg]` compiles into `transform`, and the
+   individual properties are applied *before* it, so a decoration can drift here
+   and still keep the static tilt set by a utility class, no wrapper element
+   and no fighting over one property.
+   --------------------------------------------------------------------------- */
+
+@keyframes drift-y {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -22px;
+  }
+}
+
+@keyframes drift-xy {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 18px -14px;
+  }
+}
+
+@keyframes turn {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+    translate: 0 0;
+  }
+  50% {
+    opacity: 1;
+    translate: 0 -8px;
+  }
+}
+
+.drift {
+  animation: drift-y var(--drift-duration, 14s) ease-in-out var(--drift-delay, 0s) infinite;
+}
+.drift-alt {
+  animation: drift-xy var(--drift-duration, 18s) ease-in-out var(--drift-delay, 0s) infinite;
+}
+.turn-slow {
+  animation: turn var(--drift-duration, 90s) linear infinite;
+}
+.breathe {
+  animation: breathe var(--drift-duration, 9s) ease-in-out var(--drift-delay, 0s) infinite;
+}
+
+/* Screenshots are tall phone captures; this keeps their bottoms from ending
+   in a hard cut inside banners. */
+.mask-fade-b {
+  -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+}
+
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-fade-up,
+  .drift,
+  .drift-alt,
+  .turn-slow,
+  .breathe {
+    animation: none !important;
+  }
+}

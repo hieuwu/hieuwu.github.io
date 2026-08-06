@@ -1,0 +1,35 @@
+{
+  "name": "hieuwu-portfolio",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Personal portfolio of Hieu Vu — Android & Kotlin Multiplatform Engineer",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit",
+    "optimize:shots": "node scripts/optimize-screenshots.mjs"
+  },
+  "dependencies": {
+    "@astryxdesign/core": "^0.2.0",
+    "@astryxdesign/theme-neutral": "^0.2.0",
+    "lucide-react": "^0.469.0",
+    "motion": "^12.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "sharp": "^0.35.3",
+    "simple-icons": "^16.28.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
+  }
+}

@@ -1,0 +1,164 @@
+/**
+ * "Ocean", a custom Astryx theme.
+ *
+ * Astryx defines a theme as a set of CSS custom property overrides, so this file
+ * re-points the neutral theme's semantic tokens at the portfolio palette instead
+ * of forking any component. It sits in the `portfolio-theme` cascade layer,
+ * declared after `astryx-theme`, so these values win without specificity hacks.
+ *
+ * Light/dark resolves through CSS `light-dark()` + `color-scheme`, the same
+ * mechanism the shipped Astryx themes use, the theme toggle only flips
+ * `data-theme` on <html>.
+ */
+
+@layer portfolio-theme {
+  html {
+    /* =====================================================================
+       Palette primitives, deep twilight → light cyan
+       ===================================================================== */
+
+    --twilight-100: #010113;
+    --twilight-200: #010226;
+    --twilight-300: #020338;
+    --twilight-400: #02044b;
+    --twilight-500: #03045e; /* deep twilight */
+    --twilight-600: #0508ae;
+    --twilight-700: #0f12f8;
+    --twilight-800: #5f61fa;
+    --twilight-900: #afb0fd;
+
+    --teal-100: #001825;
+    --teal-200: #003049;
+    --teal-300: #00486e;
+    --teal-400: #005f93;
+    --teal-500: #0077b6; /* bright teal blue */
+    --teal-600: #00a2f9;
+    --teal-700: #3bbaff;
+    --teal-800: #7cd1ff;
+    --teal-900: #bee8ff;
+
+    --surf-100: #00242b;
+    --surf-200: #004756;
+    --surf-300: #006b81;
+    --surf-400: #008fab;
+    --surf-500: #00b4d8; /* turquoise surf */
+    --surf-600: #12d8ff;
+    --surf-700: #4ee1ff;
+    --surf-800: #89ebff;
+    --surf-900: #c4f5ff;
+
+    --frost-100: #0a3a43;
+    --frost-300: #1dafc9;
+    --frost-500: #90e0ef; /* frosted blue */
+    --frost-700: #bcedf5;
+
+    --cyan-100: #0a444f;
+    --cyan-500: #caf0f8; /* light cyan */
+    --cyan-800: #e9f9fc;
+    --cyan-900: #f4fcfe;
+
+    /* Neutrals. The dark side is the twilight ramp lifted just enough to
+       separate surfaces; the light side is a cyan-tinted paper. */
+    --ink-950: #000009;
+    --ink-900: #010113;
+    --ink-850: #01021f;
+    --ink-800: #020332;
+    --ink-700: #0b1250;
+    --ink-600: #172069;
+
+    --paper-0: #ffffff;
+    --paper-100: #fbfeff;
+    --paper-200: #f4fcfe;
+    --paper-300: #d8ecf5;
+    --paper-400: #b9dced;
+
+    /* Desaturated cuts of frosted blue: full-strength #90e0ef reads as neon
+       when it's carrying body copy. */
+    --frost-text: #a5c6d6;
+    --frost-text-dim: #7391a3;
+
+    /* =====================================================================
+       Type scale, Astryx's ramp is tuned for dense product UI (base 14px).
+       A marketing surface needs more air, so the same token names are
+       re-scaled rather than replaced.
+       ===================================================================== */
+    --font-size-2xs: 0.6875rem;
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.375rem;
+    --font-size-2xl: 1.75rem;
+    --font-size-3xl: 2.25rem;
+    --font-size-4xl: 3rem;
+    --font-size-5xl: 3.75rem;
+    --font-size-6xl: 4.5rem;
+
+    --font-family-body: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      Roboto, Helvetica, Arial, sans-serif;
+    --font-family-heading: var(--font-family-body);
+    --font-family-code: 'JetBrains Mono', ui-monospace, 'SF Mono', Monaco, Consolas,
+      'Liberation Mono', monospace;
+
+    /* Generous corners: closer to the app-tile feel than Astryx's product default. */
+    --radius-inner: 0.5rem;
+    --radius-element: 0.875rem;
+    --radius-container: 1.25rem;
+    --radius-page: 1.75rem;
+
+    /* =====================================================================
+       Semantic tokens, what components and utilities actually consume
+       ===================================================================== */
+
+    /* Surfaces */
+    --color-background-body: light-dark(var(--paper-200), var(--ink-900));
+    --color-background-surface: light-dark(var(--paper-100), var(--ink-850));
+    --color-background-card: light-dark(var(--paper-0), var(--ink-800));
+    --color-background-popover: light-dark(var(--paper-0), var(--ink-800));
+    --color-background-muted: light-dark(#eaf6fb, #04072c);
+    --color-background-inverted: light-dark(var(--twilight-500), var(--cyan-500));
+
+    /* Text */
+    --color-text-primary: light-dark(var(--twilight-500), var(--cyan-500));
+    --color-text-secondary: light-dark(#3d4f7a, var(--frost-text));
+    --color-text-muted: light-dark(#5f6f95, var(--frost-text-dim));
+    --color-text-disabled: light-dark(#8f9db8, #4a627a);
+    --color-text-accent: light-dark(var(--teal-500), var(--surf-500));
+
+    /* Borders */
+    --color-border: light-dark(var(--paper-300), var(--ink-700));
+    --color-border-emphasized: light-dark(var(--paper-400), var(--ink-600));
+
+    /* Accent / interactive */
+    --color-accent: light-dark(var(--teal-500), var(--surf-500));
+    --color-accent-muted: light-dark(#e2f4fc, var(--surf-100));
+    --color-on-accent: light-dark(#ffffff, #00141a);
+    --color-icon-accent: var(--color-text-accent);
+    --color-tint-hover: light-dark(rgb(0 119 182 / 7%), rgb(0 180 216 / 10%));
+    --color-overlay-hover: light-dark(rgb(3 4 94 / 6%), rgb(255 255 255 / 7%));
+    --color-overlay-pressed: light-dark(rgb(3 4 94 / 10%), rgb(255 255 255 / 11%));
+    --color-overlay: light-dark(rgb(1 2 38 / 45%), rgb(0 1 12 / 70%));
+
+    /* Status */
+    --color-success: light-dark(#047857, #34d399);
+    --color-warning: light-dark(#a16207, #fbbf24);
+    --color-error: light-dark(#b42318, #fda29b);
+
+    /* Shadow tint + the glow used behind lifted surfaces */
+    --color-shadow: light-dark(rgb(3 4 94 / 12%), rgb(0 0 8 / 66%));
+    --accent-glow: light-dark(rgb(0 119 182 / 20%), rgb(0 180 216 / 18%));
+
+    /* Faded brand marks read heavier on the dark scheme. Numeric, so it can't
+       go through light-dark(), see the .watermark rule in index.css. */
+    --watermark-opacity: 0.2;
+
+    /* Shadows tinted navy rather than pure black, matches the surfaces. */
+    --shadow-low: 0 1px 2px var(--color-shadow), 0 2px 6px -2px var(--color-shadow);
+    --shadow-med: 0 2px 4px var(--color-shadow), 0 10px 24px -8px var(--color-shadow);
+    --shadow-high: 0 4px 8px var(--color-shadow), 0 24px 56px -16px var(--color-shadow);
+  }
+
+  html[data-theme='dark'] {
+    --watermark-opacity: 0.16;
+  }
+}
