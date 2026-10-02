@@ -12,7 +12,7 @@ export function StoreBadge({ store }: { store: StoreLink }) {
       href={store.href}
       target="_blank"
       rel="noreferrer noopener"
-      className="group inline-block rounded-inner transition-transform duration-fast ease-emphasized hover:-translate-y-0.5"
+      className="group inline-block rounded-md transition-transform duration-medium ease-spring-fast hover:-translate-y-0.5 active:scale-95"
     >
       <img
         src={badge.src}
@@ -20,7 +20,7 @@ export function StoreBadge({ store }: { store: StoreLink }) {
         width={120}
         height={40}
         loading="lazy"
-        className="h-10 w-auto rounded-[6px] ring-1 ring-white/10 transition-shadow duration-fast group-hover:shadow-med"
+        className="h-11 w-auto rounded-[8px] transition-shadow duration-short group-hover:shadow-e3"
       />
     </a>
   )

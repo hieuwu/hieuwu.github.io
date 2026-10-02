@@ -1,12 +1,9 @@
-/* Cascade order. Astryx layers first, then this site's theme overrides.
-   Tailwind v3 emits unlayered CSS, which always outranks layered CSS, so
-   utilities reliably win over Astryx component styles. */
-@layer reset, astryx-base, astryx-theme, portfolio-theme;
+/* Cascade order. The Astryx reset sits lowest; Tailwind v3 emits unlayered CSS,
+   which always outranks layered CSS, so utilities reliably win. */
+@layer reset;
 
 @import '@astryxdesign/core/reset.css';
-@import '@astryxdesign/core/astryx.css';
-@import '@astryxdesign/theme-neutral/theme.css';
-@import './theme-ocean.css';
+@import './theme-m3.css';
 
 @tailwind components;
 @tailwind utilities;
@@ -28,160 +25,263 @@ html {
 }
 
 body {
-  background-color: var(--color-background-body);
-  color: var(--color-text-primary);
-  font-family: var(--font-family-body);
-  font-size: var(--font-size-base);
-  line-height: 1.65;
+  background-color: var(--md-surface);
+  color: var(--md-on-surface);
+  font-family: var(--md-font-plain);
+  font-size: 1rem;
+  line-height: 1.6;
   overflow-x: hidden;
+  transition: background-color var(--md-duration-medium) var(--md-ease-standard);
 }
 
 ::selection {
-  background-color: var(--surf-500);
-  color: #00141a;
+  background-color: var(--md-primary-container);
+  color: var(--md-on-primary-container);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-text-accent);
-  outline-offset: 2px;
-  border-radius: var(--radius-inner);
+  outline: 3px solid var(--md-primary);
+  outline-offset: 3px;
 }
 
-/* Thin, theme-aware scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border-emphasized) transparent;
-}
-*::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-*::-webkit-scrollbar-thumb {
-  background-color: var(--color-border-emphasized);
-  border-radius: var(--radius-full);
-  border: 3px solid transparent;
-  background-clip: content-box;
+  scrollbar-color: var(--md-outline-variant) transparent;
 }
 
 /* ==========================================================================
-   Reusable primitives
+   Components
    ========================================================================== */
 
 @layer components {
-  /* Small uppercase technical label used above every section heading */
+  /* Expressive display type: Google Sans Flex with the roundness axis up and
+     a tight, confident tracking. */
+  .type-display {
+    font-family: var(--md-font-brand);
+    font-weight: 760;
+    letter-spacing: -0.022em;
+    font-variation-settings: 'ROND' 100, 'opsz' 144;
+    text-wrap: balance;
+  }
+  .type-headline {
+    font-family: var(--md-font-brand);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    font-variation-settings: 'ROND' 60;
+  }
+  .type-label {
+    font-family: var(--md-font-brand);
+    font-weight: 600;
+    font-variation-settings: 'ROND' 40;
+  }
+
+  /* -----------------------------------------------------------------------
+     Buttons. M3 Expressive buttons are round at rest and square up when
+     pressed; radius is set as half the height so the change is continuous
+     instead of snapping from 9999px.
+     ----------------------------------------------------------------------- */
+  .btn {
+    --btn-h: 3rem;
+    --btn-r: calc(var(--btn-h) / 2);
+    --btn-r-pressed: var(--md-shape-md);
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: var(--btn-h);
+    padding-inline: 1.5rem;
+    border-radius: var(--btn-r);
+    font-family: var(--md-font-brand);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    font-variation-settings: 'ROND' 50;
+    white-space: nowrap;
+    overflow: hidden;
+    transition:
+      border-radius var(--md-duration-medium) var(--md-spring-fast),
+      transform var(--md-duration-medium) var(--md-spring-fast),
+      box-shadow var(--md-duration-short) var(--md-ease-standard),
+      background-color var(--md-duration-short) var(--md-ease-standard);
+  }
+  /* State layer: currentColor at the M3 hover / pressed opacities. */
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity var(--md-duration-short) var(--md-ease-standard);
+  }
+  .btn:hover::before {
+    opacity: 0.08;
+  }
+  .btn:active::before {
+    opacity: 0.12;
+  }
+  .btn:active {
+    border-radius: var(--btn-r-pressed);
+    transform: scale(0.97);
+  }
+
+  .btn-sm {
+    --btn-h: 2.5rem;
+    --btn-r-pressed: var(--md-shape-sm);
+    padding-inline: 1rem;
+    font-size: 0.875rem;
+  }
+  .btn-lg {
+    --btn-h: 3.5rem;
+    --btn-r-pressed: var(--md-shape-lg);
+    padding-inline: 1.75rem;
+    font-size: 1.0625rem;
+  }
+  .btn-xl {
+    --btn-h: 4.5rem;
+    --btn-r-pressed: var(--md-shape-xl);
+    padding-inline: 2.25rem;
+    font-size: 1.25rem;
+    gap: 0.75rem;
+  }
+
+  .btn-filled {
+    background-color: var(--md-primary);
+    color: var(--md-on-primary);
+  }
+  .btn-filled:hover {
+    box-shadow: var(--md-elevation-2);
+  }
+  .btn-tonal {
+    background-color: var(--md-secondary-container);
+    color: var(--md-on-secondary-container);
+  }
+  .btn-outlined {
+    color: var(--md-on-surface-variant);
+    box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+  }
+  .btn-outlined:hover {
+    color: var(--md-on-surface);
+  }
+  .btn-text {
+    color: var(--md-primary);
+    padding-inline: 0.875rem;
+  }
+
+  /* Icon buttons: round at rest, morph to a squircle-ish square on hover. */
+  .icon-btn {
+    position: relative;
+    isolation: isolate;
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 1.375rem;
+    overflow: hidden;
+    transition:
+      border-radius var(--md-duration-medium) var(--md-spring-fast),
+      transform var(--md-duration-medium) var(--md-spring-fast),
+      background-color var(--md-duration-short) var(--md-ease-standard);
+  }
+  .icon-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity var(--md-duration-short) var(--md-ease-standard);
+  }
+  .icon-btn:hover {
+    border-radius: var(--md-shape-md);
+  }
+  .icon-btn:hover::before {
+    opacity: 0.08;
+  }
+  .icon-btn:active {
+    transform: scale(0.92);
+  }
+
+  /* -----------------------------------------------------------------------
+     Chips
+     ----------------------------------------------------------------------- */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 2rem;
+    padding-inline: 0.75rem;
+    border-radius: var(--md-shape-sm);
+    font-family: var(--md-font-brand);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--md-on-surface-variant);
+    box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+    transition:
+      border-radius var(--md-duration-medium) var(--md-spring-fast),
+      background-color var(--md-duration-short) var(--md-ease-standard);
+  }
+  .chip:hover {
+    border-radius: var(--md-shape-lg);
+  }
+  .chip-selected {
+    background-color: var(--md-secondary-container);
+    color: var(--md-on-secondary-container);
+    box-shadow: none;
+  }
+
+  /* -----------------------------------------------------------------------
+     Cards. Expressive cards get a little bigger, and their corners loosen
+     when hovered, so the whole surface feels responsive.
+     ----------------------------------------------------------------------- */
+  .card {
+    position: relative;
+    border-radius: var(--md-shape-xl);
+    transition:
+      border-radius var(--md-duration-long) var(--md-spring),
+      translate var(--md-duration-long) var(--md-spring),
+      background-color var(--md-duration-short) var(--md-ease-standard),
+      box-shadow var(--md-duration-medium) var(--md-ease-standard);
+  }
+  .card-interactive:hover {
+    border-radius: var(--md-shape-2xl);
+    /* `translate`, not `transform`: Motion owns transform on revealed cards. */
+    translate: 0 -4px;
+  }
+
   .eyebrow {
-    @apply font-mono text-2xs uppercase tracking-[0.18em] text-accent;
-  }
-
-  /* The site's default card surface */
-  .surface-card {
-    background-color: var(--color-background-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-container);
-  }
-
-  /* Hairline that fades out at both ends: used as section separators */
-  .rule-fade {
-    height: 1px;
-    background: linear-gradient(
-      to right,
-      transparent,
-      var(--color-border) 15%,
-      var(--color-border) 85%,
-      transparent
-    );
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--md-font-brand);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-variation-settings: 'ROND' 100;
+    color: var(--md-primary);
   }
 }
 
-/* Flat decorative shapes. Solid fills, often bled off their container's edges so
-   only an arc shows, no blur, no gradient, so the content stays the loudest
-   thing on screen. Radius is left to the utility classes: this rule sits after
-   `@tailwind utilities`, so setting it here would beat `rounded-*`. */
-.shape {
+/* ==========================================================================
+   Shapes
+   ========================================================================== */
+
+/* Clip to an M3 shape from --shape; morph to --shape-hover when hovered (or
+   when an ancestor `.group` is). See components/ui/Shape.tsx. */
+.morph {
+  clip-path: var(--shape);
+  transition: clip-path 900ms var(--md-spring);
+}
+.morph:hover,
+.group:hover .morph {
+  clip-path: var(--shape-hover, var(--shape));
+}
+
+.deco {
   position: absolute;
   pointer-events: none;
-}
-
-/* Oversized brand mark sitting behind a panel's content.
-   NB: `opacity` can't use light-dark(), that function only resolves to a
-   <color>, so a numeric argument makes the whole declaration invalid and the
-   mark renders at full strength. The per-scheme value comes from a custom
-   property set in theme-ocean.css instead. */
-.watermark {
-  position: absolute;
-  pointer-events: none;
-  opacity: var(--watermark-opacity, 0.07);
-}
-
-/* ---------------------------------------------------------------------------
-   Backdrop motion
-   ---------------------------------------------------------------------------
-   These animate the individual `translate` / `rotate` properties rather than
-   `transform`. Tailwind's `rotate-[14deg]` compiles into `transform`, and the
-   individual properties are applied *before* it, so a decoration can drift here
-   and still keep the static tilt set by a utility class, no wrapper element
-   and no fighting over one property.
-   --------------------------------------------------------------------------- */
-
-@keyframes drift-y {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: 0 -22px;
-  }
-}
-
-@keyframes drift-xy {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: 18px -14px;
-  }
-}
-
-@keyframes turn {
-  from {
-    rotate: 0deg;
-  }
-  to {
-    rotate: 360deg;
-  }
-}
-
-@keyframes breathe {
-  0%,
-  100% {
-    opacity: 0.35;
-    translate: 0 0;
-  }
-  50% {
-    opacity: 1;
-    translate: 0 -8px;
-  }
-}
-
-.drift {
-  animation: drift-y var(--drift-duration, 14s) ease-in-out var(--drift-delay, 0s) infinite;
-}
-.drift-alt {
-  animation: drift-xy var(--drift-duration, 18s) ease-in-out var(--drift-delay, 0s) infinite;
-}
-.turn-slow {
-  animation: turn var(--drift-duration, 90s) linear infinite;
-}
-.breathe {
-  animation: breathe var(--drift-duration, 9s) ease-in-out var(--drift-delay, 0s) infinite;
-}
-
-/* Screenshots are tall phone captures; this keeps their bottoms from ending
-   in a hard cut inside banners. */
-.mask-fade-b {
-  -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
 }
 
 .marquee-mask {
@@ -192,10 +292,15 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee,
   .animate-fade-up,
-  .drift,
-  .drift-alt,
-  .turn-slow,
-  .breathe {
+  .animate-spin-slow,
+  .animate-spin-slower,
+  .animate-pulse {
     animation: none !important;
+  }
+  .morph,
+  .btn,
+  .icon-btn,
+  .card {
+    transition-duration: 1ms !important;
   }
 }

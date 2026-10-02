@@ -1,8 +1,14 @@
 import type { CSSProperties } from 'react'
-import { ArrowDown, ArrowUpRight, MapPin } from 'lucide-react'
+import { motion, useReducedMotion } from 'motion/react'
+import { ArrowDown, MapPin } from 'lucide-react'
 import { profile, socials } from '@/content/site'
+import { projects } from '@/content/projects'
+import { openSource } from '@/content/openSource'
+import { posts } from '@/content/blog'
 import { resolveSocialIcon } from '@/components/ui/icons'
 import { TechIcon } from '@/components/ui/TechIcon'
+import { MorphLoop, Shape } from '@/components/ui/Shape'
+import type { ShapeName } from '@/components/ui/shapes'
 
 /** The core stack. Repeated below to fill the loop seamlessly. */
 const MARQUEE = [
@@ -15,218 +21,149 @@ const MARQUEE = [
   'RevenueCat',
 ]
 
-/**
- * Hero backdrop.
- *
- * Deliberately short lists. Earlier passes stacked five kinds of decoration on
- * top of each other and the composition turned to noise, so this is pared back
- * to: the three platform marks the work is actually about, the contour waves
- * that frame them, one soft colour field per side, and a single ring. Anything
- * added here should replace something rather than stack on it.
- */
-const BACKDROP = [
-  // Pushed to the outer corners and bled off the edges rather than ringed around
-  // the copy, they frame the band from the back instead of competing with it.
+/** Every figure here is counted from the content files, never typed in. */
+const merged = openSource.flatMap((r) => r.contributions).filter((c) => c.merged).length
+const STATS: {
+  value: number
+  label: string
+  href: string
+  shape: ShapeName
+  hover: ShapeName
+  tone: string
+  deco: string
+}[] = [
   {
-    tech: 'Kotlin',
-    className:
-      '-right-10 top-20 h-36 w-36 rotate-[12deg] sm:-right-16 sm:-top-20 sm:h-[15rem] sm:w-[15rem] lg:h-[19rem] lg:w-[19rem]',
-    anim: 'drift',
-    duration: '17s',
-    delay: '0s',
+    value: projects.length,
+    label: 'apps shipped to the stores',
+    href: '#projects',
+    shape: 'cookie-9',
+    hover: 'flower',
+    tone: 'bg-primary text-on-primary',
+    deco: 'bg-[color-mix(in_oklab,var(--md-on-primary)_14%,transparent)]',
   },
   {
-    tech: 'Android',
-    className:
-      '-left-20 -bottom-16 h-36 w-36 -rotate-[10deg] sm:h-[14rem] sm:w-[14rem] lg:h-[18rem] lg:w-[18rem]',
-    anim: 'drift-alt',
-    duration: '21s',
-    delay: '-4s',
+    value: merged,
+    label: 'merged pull requests upstream',
+    href: '#open-source',
+    shape: 'clover',
+    hover: 'cookie-4',
+    tone: 'bg-tertiary-container text-on-tertiary-container',
+    deco: 'bg-[color-mix(in_oklab,var(--md-tertiary)_18%,transparent)]',
   },
   {
-    tech: 'Apple',
-    // Monochrome mark: it inherits this colour rather than its own black.
-    className:
-      'hidden sm:block -right-20 bottom-[6%] h-32 w-32 -rotate-[6deg] text-[color:var(--frost-500)] sm:h-44 sm:w-44 lg:h-[15rem] lg:w-[15rem]',
-    anim: 'drift-alt',
-    duration: '19s',
-    delay: '-2s',
+    value: posts.length,
+    label: 'Supadroid articles written',
+    href: '#writing',
+    shape: 'sunny',
+    hover: 'burst',
+    tone: 'bg-secondary-container text-on-secondary-container',
+    deco: 'bg-[color-mix(in_oklab,var(--md-secondary)_16%,transparent)]',
   },
-] as const
+]
+
+/** Small platform tiles that orbit the portrait. */
+const ORBIT: { tech: string; shape: ShapeName; className: string; delay: number }[] = [
+  { tech: 'Kotlin', shape: 'squircle', className: '-left-2 top-[12%] sm:-left-6', delay: 0 },
+  { tech: 'Android', shape: 'cookie-6', className: '-right-1 top-[30%] sm:-right-5', delay: 1.2 },
+  { tech: 'Apple', shape: 'clover', className: 'left-[6%] bottom-[16%]', delay: 2.1 },
+]
 
 /**
- * Soft colour fields. Blurred solid discs rather than gradient fills, the
- * falloff comes from the blur, so there's no banding and the waves stay crisp
- * against them. One per side, both bled off the edge.
- */
-const GLOWS = [
-  {
-    className: '-left-72 top-[26%] h-[32rem] w-[32rem]',
-    color: 'var(--surf-500)',
-    mix: 14,
-    duration: '26s',
-    delay: '0s',
-  },
-  {
-    className: '-right-56 -top-40 h-[30rem] w-[30rem]',
-    color: 'var(--teal-500)',
-    mix: 13,
-    duration: '32s',
-    delay: '-9s',
-  },
-] as const
-
-/** One dashed ring, low and to the right. The turn only reads because it's dashed. */
-const RINGS = [
-  {
-    className:
-      'hidden lg:block -right-24 top-[58%] h-[22rem] w-[22rem] border-[1.5px] border-dashed turn-slow',
-    duration: '70s',
-    opacity: 0.16,
-  },
-] as const
-
-/**
- * Flowing contour lines, drawn as one SVG so the curves stay smooth at any
- * width. They sweep left to right and bow around the middle of the band, which
- * pulls the eye inward; a radial mask thins them out directly behind the
- * headline so the copy still reads as the foreground.
- */
-const WAVES = [
-  { d: 'M-80 212 C 262 124, 476 332, 720 252 S 1188 118, 1560 218', opacity: 0.7, duration: '19s', delay: '-4s' },
-  { d: 'M-80 336 C 244 252, 484 462, 720 380 S 1204 250, 1560 348', opacity: 1, duration: '26s', delay: '-9s' },
-  { d: 'M-80 472 C 262 400, 462 622, 720 540 S 1184 400, 1560 498', opacity: 0.7, duration: '21s', delay: '-2s' },
-  { d: 'M-80 618 C 240 560, 502 762, 720 690 S 1164 558, 1560 656', opacity: 0.45, duration: '29s', delay: '-13s' },
-] as const
-
-/**
- * Above-the-fold entrance is CSS, not JS.
- *
- * A mount animation driven from JS starts at opacity 0, so anything that stops
- * it running, a backgrounded tab throttling rAF, a script error, JS disabled , 
- * leaves the hero blank. A CSS animation with `both` fill can't fail that way,
- * and it keeps the first paint free of animation work. Scroll-triggered reveals
- * further down the page still use motion, where nothing is hidden if they never
- * fire (they start in view).
+ * Above-the-fold entrance is CSS, not JS: a JS mount animation starts at
+ * opacity 0, so anything that stops it running leaves the hero blank. A CSS
+ * animation with `both` fill can't fail that way.
  */
 const rise = (delay: number): { style: CSSProperties } => ({
   style: { animationDelay: `${delay}ms` },
 })
 
-export function Hero() {
+/** Wraps the last two words of the headline in a tonal highlight pill. */
+function Headline({ text }: { text: string }) {
+  const stop = text.endsWith('.') ? '.' : ''
+  const words = text.slice(0, stop ? -1 : undefined).split(' ')
+  const tail = words.splice(-2).join(' ')
   return (
-    <section id="top" className="relative overflow-hidden pb-16 pt-28 sm:pb-24 sm:pt-36">
-      {/* Backdrop, in four layers: soft colour fields, contour waves, one ring,
-          then the platform marks. Each element drifts on its own long cycle with
-          a negative delay, so they start mid-motion and never visibly sync up,
-          and all of it stays well under the text's contrast.
+    <>
+      {words.join(' ')}{' '}
+      <span className="relative inline-block whitespace-nowrap">
+        <span
+          aria-hidden
+          className="absolute -inset-x-3 inset-y-[0.08em] -z-10 -rotate-1 rounded-full bg-primary-container sm:-inset-x-4"
+        />
+        <span className="text-primary">{tail}</span>
+      </span>
+      {stop}
+    </>
+  )
+}
 
-          The wrapper stops short of the marquee strip so no decoration appears
-          to spill past that divider. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-24 top-0 -z-10 overflow-hidden sm:bottom-32"
-      >
-        {GLOWS.map((g) => (
-          <div
-            key={g.className}
-            className={`shape drift-alt rounded-full blur-3xl ${g.className}`}
-            style={{
-              backgroundColor: `color-mix(in oklab, ${g.color} ${g.mix}%, transparent)`,
-              ['--drift-duration' as string]: g.duration,
-              ['--drift-delay' as string]: g.delay,
-            }}
-          />
-        ))}
+export function Hero() {
+  const reduced = useReducedMotion()
 
-        <svg
-          viewBox="0 0 1440 900"
-          preserveAspectRatio="none"
-          className="absolute inset-0 h-full w-full [mask-image:radial-gradient(115%_85%_at_26%_46%,transparent_0%,#000_62%)]"
-        >
-          {WAVES.map((w) => (
-            <path
-              key={w.d}
-              d={w.d}
-              fill="none"
-              stroke="var(--surf-500)"
-              strokeWidth={1.5}
-              vectorEffect="non-scaling-stroke"
-              className="drift-alt"
-              style={{
-                opacity: w.opacity * 0.34,
-                ['--drift-duration' as string]: w.duration,
-                ['--drift-delay' as string]: w.delay,
-              }}
-            />
-          ))}
-        </svg>
+  const float = (delay: number) =>
+    reduced
+      ? {}
+      : {
+          animate: { y: [0, -10, 0], rotate: [0, 6, 0] },
+          transition: { duration: 6, repeat: Infinity, ease: 'easeInOut' as const, delay },
+        }
 
-        {RINGS.map((r) => (
-          <div
-            key={r.className}
-            className={`shape rounded-full border-[color:var(--surf-500)] ${r.className}`}
-            style={{ opacity: r.opacity, ['--drift-duration' as string]: r.duration }}
-          />
-        ))}
-
-
-        {BACKDROP.map((m) => (
-          <TechIcon
-            key={m.tech}
-            tech={m.tech}
-            brand
-            className={`watermark ${m.anim} ${m.className}`}
-            style={{
-              ['--drift-duration' as string]: m.duration,
-              ['--drift-delay' as string]: m.delay,
-            }}
-          />
-        ))}
+  return (
+    <section id="top" className="relative overflow-hidden pb-10 pt-28 sm:pt-36">
+      {/* Backdrop: two oversized shapes bled off the edges, turning slowly. */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <Shape
+          name="flower"
+          className="deco -right-40 -top-40 h-[34rem] w-[34rem] animate-spin-slower bg-primary-container opacity-60 sm:-right-24 lg:h-[44rem] lg:w-[44rem]"
+        />
+        <Shape
+          name="cookie-6"
+          className="deco -left-48 top-[48%] h-[26rem] w-[26rem] animate-spin-slow bg-tertiary-container opacity-50"
+        />
       </div>
 
       <div className="mx-auto w-full max-w-content px-5 sm:px-8">
-        {/* minmax(0,…) on the single-column case too: without it the column
-            sizes to the h1's min-content and overflows narrow viewports. */}
-        <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-12 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16">
+        <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-10">
           {/* ---------------------------------------------------------- Copy */}
           <div>
-            {/* Identity: name, title, location, now lives on the avatar card,
-                so the copy column opens straight on the statement. */}
+            {profile.available && (
+              <p
+                {...rise(0)}
+                className="type-label inline-flex animate-fade-up items-center gap-2.5 rounded-full bg-surface-lowest py-2 pl-3 pr-4 text-label-lg text-on-surface shadow-e1"
+              >
+                <span className="relative grid h-2.5 w-2.5 place-items-center">
+                  <span className="absolute inset-0 animate-pulse rounded-full bg-[#1e8e3e]" />
+                  <span className="relative h-2.5 w-2.5 rounded-full bg-[#1e8e3e]" />
+                </span>
+                {profile.availableLabel}
+              </p>
+            )}
+
             <h1
-              {...rise(60)}
-              className="max-w-[15ch] animate-fade-up text-pretty text-4xl font-extrabold leading-[1.02] tracking-[-0.04em] text-primary sm:text-6xl"
+              {...rise(80)}
+              className="type-display relative z-0 mt-7 max-w-[13ch] animate-fade-up text-display-sm text-on-surface sm:text-display-lg xl:text-display-xl"
             >
-              {profile.headline}
+              <Headline text={profile.headline} />
             </h1>
 
             <p
-              {...rise(180)}
-              className="mt-7 max-w-prose animate-fade-up text-base text-secondary sm:text-lg"
+              {...rise(200)}
+              className="mt-8 max-w-prose animate-fade-up text-body-lg text-on-surface-variant"
             >
               {profile.intro}
             </p>
 
-            <div {...rise(300)} className="mt-9 flex flex-wrap items-center gap-3 animate-fade-up">
-              <a
-                href="#projects"
-                className="group inline-flex items-center gap-2 rounded-full bg-accent-bg px-5 py-3 text-sm font-semibold text-on-accent transition-all duration-fast ease-emphasized hover:-translate-y-0.5 hover:shadow-med"
-              >
+            <div {...rise(320)} className="mt-10 flex animate-fade-up flex-wrap items-center gap-3">
+              <a href="#projects" className="btn btn-filled btn-lg group">
                 See the work
-                <ArrowDown className="h-4 w-4 transition-transform duration-fast group-hover:translate-y-0.5" />
+                <ArrowDown className="h-5 w-5 transition-transform duration-medium ease-spring-fast group-hover:translate-y-0.5" />
               </a>
-              <a
-                href="#collaborate"
-                className="inline-flex items-center gap-2 rounded-full border border-line-strong px-5 py-3 text-sm font-semibold text-primary transition-all duration-fast ease-emphasized hover:-translate-y-0.5 hover:bg-tint-hover"
-              >
+              <a href="#collaborate" className="btn btn-tonal btn-lg">
                 Work with me
               </a>
             </div>
 
-            <ul
-              {...rise(360)}
-              className="mt-8 flex animate-fade-up flex-wrap items-center gap-x-5 gap-y-3"
-            >
+            <ul {...rise(400)} className="mt-8 flex animate-fade-up flex-wrap items-center gap-2">
               {socials.map((s) => {
                 const Icon = resolveSocialIcon(s.icon)
                 return (
@@ -235,11 +172,11 @@ export function Hero() {
                       href={s.href}
                       target="_blank"
                       rel="noreferrer noopener"
-                      className="group inline-flex items-center gap-2 text-sm text-secondary transition-colors duration-fast hover:text-primary"
+                      aria-label={s.label}
+                      title={s.label}
+                      className="icon-btn h-12 w-12 bg-surface-container text-on-surface-variant hover:text-on-surface"
                     >
-                      <Icon className="h-4 w-4" />
-                      <span>{s.label}</span>
-                      <ArrowUpRight className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all duration-fast group-hover:translate-x-0 group-hover:opacity-100" />
+                      <Icon className="h-5 w-5" />
                     </a>
                   </li>
                 )
@@ -248,54 +185,92 @@ export function Hero() {
           </div>
 
           {/* ------------------------------------------------------- Portrait */}
-          <div
-            {...rise(200)}
-            className="mx-auto w-full max-w-[20rem] animate-fade-up lg:sticky lg:top-24"
-          >
-            <div className="surface-card overflow-hidden shadow-low">
-              <div className="relative aspect-[4/5] overflow-hidden">
+          <div {...rise(160)} className="mx-auto w-full max-w-[26rem] animate-fade-up">
+            <div className="group relative aspect-square">
+              <MorphLoop
+                sequence={['cookie-12', 'flower', 'sunny', 'clover']}
+                step={3}
+                className="absolute inset-0 bg-primary"
+              />
+              <Shape
+                name="cookie-9"
+                hover="squircle"
+                className="absolute inset-[9%] overflow-hidden bg-surface-container"
+              >
                 <img
                   src={profile.avatar}
                   alt={`${profile.name}, ${profile.role}`}
                   width={640}
                   height={800}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover transition-transform duration-long ease-spring group-hover:scale-105"
                 />
-                <div
-                  aria-hidden
-                  className="absolute inset-0 ring-1 ring-inset ring-[color-mix(in_oklab,var(--surf-500)_28%,transparent)]"
-                />
-              </div>
-              {/* Name, job title and location: the identity block moved off the
-                  copy column so the headline can carry the whole left side. */}
-              <div className="px-5 py-4">
-                <p className="text-lg font-extrabold tracking-[-0.02em] text-primary">
-                  {profile.name}
-                </p>
-                <p className="mt-0.5 text-sm font-semibold text-accent">{profile.role}</p>
-                <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted">
-                  <MapPin className="h-3.5 w-3.5 shrink-0" strokeWidth={1.75} />
-                  {profile.location}
-                </p>
-              </div>
+              </Shape>
+
+              {ORBIT.map((o) => (
+                <motion.div
+                  key={o.tech}
+                  className={`absolute h-16 w-16 drop-shadow-[0_8px_16px_rgba(15,76,129,0.18)] sm:h-[4.5rem] sm:w-[4.5rem] ${o.className}`}
+                  {...float(o.delay)}
+                >
+                  <Shape
+                    name={o.shape}
+                    className="grid h-full w-full place-items-center bg-surface-lowest text-on-surface"
+                  >
+                    <TechIcon tech={o.tech} brand className="h-7 w-7" />
+                  </Shape>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Identity card, overlapping the bottom of the portrait. */}
+            <div className="relative z-10 mx-auto -mt-8 w-[88%] rounded-xl bg-surface-lowest px-6 py-5 text-center shadow-e3">
+              <p className="type-headline text-headline-sm text-on-surface">{profile.name}</p>
+              <p className="type-label mt-1 text-title-sm text-primary">
+                {profile.role} · {profile.specialty}
+              </p>
+              <p className="mt-2 inline-flex items-center gap-1.5 text-body-sm text-on-surface-variant">
+                <MapPin className="h-4 w-4 shrink-0" />
+                {profile.location}
+              </p>
             </div>
           </div>
         </div>
+
+        {/* ------------------------------------------------------- Stat bento */}
+        <ul className="mt-16 grid gap-3 sm:mt-24 sm:grid-cols-3">
+          {STATS.map((s, i) => (
+            <li key={s.label} {...rise(480 + i * 80)} className="animate-fade-up">
+              <a
+                href={s.href}
+                className={`card card-interactive group flex h-full items-end justify-between gap-4 overflow-hidden p-6 sm:min-h-[11rem] sm:p-7 ${s.tone}`}
+              >
+                <Shape
+                  name={s.shape}
+                  hover={s.hover}
+                  hoverRotate={30}
+                  className={`deco -right-8 -top-8 h-36 w-36 ${s.deco}`}
+                />
+                <div className="relative">
+                  <p className="type-display text-display-md leading-none">{s.value}</p>
+                  <p className="type-label mt-3 text-title-md">{s.label}</p>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* ------------------------------------------------------------ Marquee */}
-      <div className="marquee-mask relative mt-16 select-none border-y border-line bg-surface py-5 sm:mt-24">
-        <div className="animate-marquee flex w-max items-center">
-          {/* Four passes of the five: two make the loop, doubled to fill wide viewports. */}
+      <div className="marquee-mask relative mt-12 select-none py-2">
+        <div className="flex w-max animate-marquee items-center gap-3">
+          {/* Four passes: two make the loop, doubled to fill wide viewports. */}
           {[...MARQUEE, ...MARQUEE, ...MARQUEE, ...MARQUEE].map((item, i) => (
-            <span key={`${item}-${i}`} className="flex items-center">
-              <span className="flex items-center gap-2.5 px-7">
-                <TechIcon tech={item} brand className="h-5 w-5 shrink-0" />
-                <span className="whitespace-nowrap text-sm font-semibold tracking-tight text-secondary">
-                  {item}
-                </span>
-              </span>
-              <span aria-hidden className="h-1 w-1 rounded-full bg-[var(--surf-500)] opacity-60" />
+            <span
+              key={`${item}-${i}`}
+              className="type-label flex items-center gap-2.5 whitespace-nowrap rounded-full bg-surface-container px-5 py-3 text-title-sm text-on-surface"
+            >
+              <TechIcon tech={item} brand className="h-5 w-5 shrink-0" />
+              {item}
             </span>
           ))}
         </div>

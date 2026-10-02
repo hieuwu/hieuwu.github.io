@@ -1,0 +1,111 @@
+/**
+ * Material 3 Expressive theme.
+ *
+ * Colour roles follow the M3 scheme spec, seeded from Classic Blue #0F4C81.
+ * The primary is used at exactly that value in the light scheme; the rest of
+ * the roles are tonal steps of the same hue, plus one warm tertiary (amber)
+ * that is only spent on a few decorative shapes and highlights.
+ *
+ * Light is the default. Dark resolves through `light-dark()`; the toggle only
+ * flips `data-theme` on <html>, which sets `color-scheme`.
+ */
+
+html {
+  color-scheme: light;
+}
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+html {
+  /* =======================================================================
+     Colour roles
+     ======================================================================= */
+  --md-primary: light-dark(#0f4c81, #a3c9ff);
+  --md-on-primary: light-dark(#ffffff, #00315c);
+  --md-primary-container: light-dark(#d3e4ff, #12497b);
+  --md-on-primary-container: light-dark(#001c38, #d3e4ff);
+  /* The fixed-dim tone: a mid blue that reads on both container and surface. */
+  --md-primary-fixed-dim: light-dark(#a3c9ff, #a3c9ff);
+  /* Secondary text on a solid primary block (not an M3 role, but needed once
+     the primary is used as a section background). */
+  --md-on-primary-variant: light-dark(#bcd5f5, #1d4d7c);
+
+  --md-secondary: light-dark(#535f70, #bbc7db);
+  --md-on-secondary: light-dark(#ffffff, #253140);
+  --md-secondary-container: light-dark(#d7e3f7, #3c4858);
+  --md-on-secondary-container: light-dark(#101c2b, #d7e3f7);
+
+  --md-tertiary: light-dark(#8a5100, #ffb870);
+  --md-on-tertiary: light-dark(#ffffff, #4a2800);
+  --md-tertiary-container: light-dark(#ffdcbe, #693c00);
+  --md-on-tertiary-container: light-dark(#2c1600, #ffdcbe);
+
+  --md-error: light-dark(#ba1a1a, #ffb4ab);
+
+  --md-surface: light-dark(#f8f9ff, #111318);
+  --md-surface-dim: light-dark(#d8dae0, #111318);
+  --md-surface-container-lowest: light-dark(#ffffff, #0c0e13);
+  --md-surface-container-low: light-dark(#f2f3fa, #191c20);
+  --md-surface-container: light-dark(#eceef4, #1d2024);
+  --md-surface-container-high: light-dark(#e6e8ee, #282a2f);
+  --md-surface-container-highest: light-dark(#e0e2e8, #33353a);
+  --md-on-surface: light-dark(#191c20, #e1e2e9);
+  --md-on-surface-variant: light-dark(#42474e, #c2c7cf);
+  --md-outline: light-dark(#73777f, #8c9199);
+  --md-outline-variant: light-dark(#c2c7cf, #42474e);
+
+  --md-inverse-surface: light-dark(#2e3135, #e1e2e9);
+  --md-inverse-on-surface: light-dark(#eff0f7, #2e3135);
+  --md-inverse-primary: light-dark(#a3c9ff, #0f4c81);
+
+  --md-scrim: rgb(0 0 0 / 40%);
+  --md-shadow: light-dark(rgb(15 30 55 / 14%), rgb(0 0 0 / 50%));
+
+  /* =======================================================================
+     Shape scale (M3 Expressive adds the two largest steps)
+     ======================================================================= */
+  --md-shape-xs: 4px;
+  --md-shape-sm: 8px;
+  --md-shape-md: 12px;
+  --md-shape-lg: 16px;
+  --md-shape-lg-inc: 20px;
+  --md-shape-xl: 28px;
+  --md-shape-xl-inc: 32px;
+  --md-shape-2xl: 48px;
+  --md-shape-full: 9999px;
+
+  /* =======================================================================
+     Elevation, tinted toward the primary hue rather than pure black
+     ======================================================================= */
+  --md-elevation-1: 0 1px 2px var(--md-shadow), 0 1px 3px 1px rgb(15 76 129 / 6%);
+  --md-elevation-2: 0 1px 2px var(--md-shadow), 0 2px 6px 2px rgb(15 76 129 / 8%);
+  --md-elevation-3: 0 4px 8px 3px rgb(15 76 129 / 10%), 0 1px 3px var(--md-shadow);
+  --md-elevation-4: 0 8px 24px -4px rgb(15 76 129 / 18%), 0 2px 6px var(--md-shadow);
+
+  /* =======================================================================
+     Motion. M3 Expressive moves on springs; these are CSS approximations of
+     the spatial (slight overshoot) and effects (no overshoot) springs.
+     ======================================================================= */
+  --md-spring-fast: linear(
+    0, 0.1 3.2%, 0.39 7.6%, 0.82 14.4%, 1.02 19.6%, 1.09 24%, 1.1 27.4%,
+    1.07 32.8%, 1.01 42%, 0.99 51%, 1
+  );
+  --md-spring: linear(
+    0, 0.06 2.6%, 0.24 5.6%, 0.62 11%, 0.9 16%, 1.04 21%, 1.08 25.2%,
+    1.07 30%, 1.02 39%, 0.995 50%, 1
+  );
+  --md-ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-duration-short: 200ms;
+  --md-duration-medium: 400ms;
+  --md-duration-long: 600ms;
+
+  /* =======================================================================
+     Type
+     ======================================================================= */
+  --md-font-brand: 'Google Sans Flex', 'Google Sans', 'Roboto Flex', system-ui, -apple-system,
+    'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --md-font-plain: var(--md-font-brand);
+  --md-font-code: 'Google Sans Code', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}

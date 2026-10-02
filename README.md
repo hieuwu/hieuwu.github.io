@@ -2,8 +2,8 @@
 
 Personal portfolio for **Hieu Vu**, Senior Software Engineer, Android & Kotlin Multiplatform.
 
-React + Vite + TypeScript, styled with [Astryx](https://astryx.atmeta.com/) design tokens
-and Tailwind CSS, animated with Motion.
+React + Vite + TypeScript, styled in [Material 3 Expressive](https://m3.material.io/) with
+Tailwind CSS, animated with Motion.
 
 ## Running it
 
@@ -57,31 +57,25 @@ as just the products it covered.
 
 ## Design system
 
-The site uses Astryx as its token layer rather than its component library:
+The site follows **Material 3 Expressive**: tonal colour roles, an oversized shape
+scale, shape morphing, spring motion and Google Sans Flex.
 
-- `@astryxdesign/core/reset.css` for the reset (Tailwind Preflight is disabled)
-- `@astryxdesign/theme-neutral/theme.css` for the base semantic tokens
-- `src/styles/theme-ocean.css`, a **custom Astryx theme**: the same token names
-  repointed at this palette, plus a marketing-scale type ramp
-- `tailwind.config.js`, which maps every Tailwind utility onto an Astryx custom
-  property, so `bg-card`, `text-secondary`, `rounded-container` etc. follow the theme
+- `src/styles/theme-m3.css` holds every token: M3 colour roles seeded from
+  **Classic Blue `#0F4C81`** (light and dark via `light-dark()`), the shape scale up
+  to 48px, elevation, and CSS `linear()` approximations of the M3 springs.
+- `tailwind.config.js` maps utilities onto those roles, so classes read like the
+  spec: `bg-primary-container text-on-primary-container`, `bg-surface-low`,
+  `rounded-2xl`, `ease-spring`.
+- `src/styles/index.css` defines the M3 components as classes: `.btn` (+
+  `btn-filled` / `btn-tonal` / `btn-outlined` / `btn-text`, sizes `btn-sm`…`btn-xl`;
+  buttons square up when pressed), `.icon-btn`, `.chip`, `.card`.
+- `src/components/ui/shapes.ts` is the shape library (cookie, flower, clover,
+  sunny, burst, squircle) as `clip-path: polygon()` strings sampled at the same
+  angles, so any two shapes morph into each other. `<Shape name hover>` morphs on
+  hover in pure CSS; `<MorphLoop>` cycles shapes like the M3 loading indicator.
 
-Light and dark resolve through CSS `light-dark()` + `color-scheme`; the toggle only
-flips `data-theme` on `<html>`.
-
-**Palette**: deep twilight `#03045e`, bright teal blue `#0077b6`, turquoise surf
-`#00b4d8`, frosted blue `#90e0ef`, light cyan `#caf0f8`. Dark mode sits on
-navy-tinted near-blacks; light mode on cyan-tinted paper.
-
-**Layout** takes its rhythm from [wise.com](https://wise.com): oversized extra-bold
-headings, and one or two sections rendered as solid full-bleed colour blocks
-(`<Section tone="deep">`) instead of every section looking the same.
-
-Decoration is three flat layers, no gradient fills and no grid overlays: soft
-colour fields (blurred solid discs), thin outline rings, and oversized faded brand
-marks. `.shape` and `.watermark` in `src/styles/index.css` are the two helpers;
-watermark strength is `--watermark-opacity`, set per colour scheme in the theme
-(it can't go through `light-dark()`, which only resolves to colours).
+Light is the default theme; the toggle stores `dark` in `localStorage` and flips
+`data-theme` on `<html>`. Astryx is still used for its CSS reset only.
 
 Each project showcase overrides the accent with colours taken from that app's own
 theme file, so a card looks like the product it advertises.

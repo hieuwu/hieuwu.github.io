@@ -1,10 +1,36 @@
 import { useEffect, useState } from 'react'
-import { Menu, Moon, Sun, X } from 'lucide-react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { ArrowRight, Menu, Moon, Sun, X } from 'lucide-react'
 import { navItems, profile } from '@/content/site'
 import { useTheme } from '@/hooks/useTheme'
+import { Shape } from '@/components/ui/Shape'
 
+/** Logo mark: a 12-scallop cookie that blooms into a flower on hover. */
+export function Monogram({ size = 'h-10 w-10' }: { size?: string }) {
+  return (
+    <span className={`relative grid ${size} shrink-0 place-items-center`}>
+      <Shape
+        as="span"
+        name="cookie-12"
+        hover="flower"
+        hoverRotate={22}
+        className="absolute inset-0 bg-primary"
+      />
+      <span className="type-label relative text-[0.8rem] font-extrabold tracking-tight text-on-primary">
+        HV
+      </span>
+    </span>
+  )
+}
+
+/**
+ * An M3 Expressive floating toolbar: a single pill that hovers over the page,
+ * with the active destination marked by a tonal indicator that springs between
+ * items (shared layout animation).
+ */
 export function Nav() {
   const { theme, toggle } = useTheme()
+  const reduced = useReducedMotion()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [active, setActive] = useState<string>('')
@@ -44,79 +70,85 @@ export function Nav() {
     }
   }, [open])
 
+  const spring = reduced
+    ? { duration: 0 }
+    : { type: 'spring' as const, stiffness: 520, damping: 34 }
+
   return (
     <>
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-element focus:bg-card focus:px-4 focus:py-2 focus:text-sm focus:shadow-high"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-primary focus:px-5 focus:py-3 focus:text-label-lg focus:text-on-primary"
       >
         Skip to content
       </a>
 
-      <header
-        className={[
-          'fixed inset-x-0 top-0 z-40 transition-all duration-medium ease-standard',
-          scrolled
-            ? 'border-b border-line bg-body/85 backdrop-blur-xl backdrop-saturate-150'
-            : 'border-b border-transparent',
-        ].join(' ')}
-      >
-        <nav className="mx-auto flex h-16 w-full max-w-content items-center justify-between px-5 sm:px-8">
-          <a
-            href="#top"
-            className="group flex items-center gap-2.5 text-sm font-semibold tracking-tight"
-          >
-            <span
-              aria-hidden
-              className="grid h-7 w-7 place-items-center rounded-inner bg-accent-bg font-mono text-xs font-bold text-on-accent transition-transform duration-fast ease-emphasized group-hover:scale-105"
-            >
-              HV
-            </span>
-            <span className="text-primary">{profile.name}</span>
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-40 px-3 pt-3 sm:px-5 sm:pt-4">
+        <nav
+          className={[
+            'pointer-events-auto mx-auto flex h-16 w-full max-w-content items-center justify-between gap-3 rounded-full pl-3 pr-2.5',
+            'transition-[background-color,box-shadow] duration-medium ease-standard',
+            scrolled || open
+              ? 'bg-surface-container shadow-e3'
+              : 'bg-surface-low/0 shadow-none',
+          ].join(' ')}
+        >
+          <a href="#top" className="group flex items-center gap-3 rounded-full pr-2">
+            <Monogram />
+            <span className="type-headline text-title-md text-on-surface">{profile.name}</span>
           </a>
 
-          <ul className="hidden items-center gap-1 md:flex">
-            {navItems.map((item) => (
-              <li key={item.href}>
-                <a
-                  href={item.href}
-                  className={[
-                    'relative rounded-full px-3.5 py-2 text-sm transition-colors duration-fast',
-                    active === item.href
-                      ? 'text-primary'
-                      : 'text-secondary hover:text-primary',
-                  ].join(' ')}
-                >
-                  {active === item.href && (
-                    <span
-                      aria-hidden
-                      className="absolute inset-0 rounded-full bg-tint-hover"
-                    />
-                  )}
-                  <span className="relative">{item.label}</span>
-                </a>
-              </li>
-            ))}
+          <ul className="hidden items-center gap-0.5 lg:flex">
+            {navItems.map((item) => {
+              const isActive = active === item.href
+              return (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    className={[
+                      'type-label relative flex h-11 items-center rounded-full px-4 text-label-lg transition-colors duration-short',
+                      isActive
+                        ? 'text-on-secondary-container'
+                        : 'text-on-surface-variant hover:bg-on-surface/[0.06] hover:text-on-surface',
+                    ].join(' ')}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-indicator"
+                        transition={spring}
+                        aria-hidden
+                        className="absolute inset-0 rounded-full bg-secondary-container"
+                      />
+                    )}
+                    <span className="relative">{item.label}</span>
+                  </a>
+                </li>
+              )
+            })}
           </ul>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button
               type="button"
               onClick={toggle}
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              className="grid h-9 w-9 place-items-center rounded-full border border-line text-secondary transition-all duration-fast hover:border-line-strong hover:text-primary"
+              className="icon-btn text-on-surface-variant"
             >
-              {theme === 'dark' ? (
-                <Sun className="h-4 w-4" strokeWidth={1.75} />
-              ) : (
-                <Moon className="h-4 w-4" strokeWidth={1.75} />
-              )}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={theme}
+                  initial={reduced ? false : { rotate: -90, scale: 0.4, opacity: 0 }}
+                  animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                  exit={reduced ? undefined : { rotate: 90, scale: 0.4, opacity: 0 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 26 }}
+                  className="grid place-items-center"
+                >
+                  {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                </motion.span>
+              </AnimatePresence>
             </button>
 
-            <a
-              href="#collaborate"
-              className="hidden rounded-full bg-accent-bg px-4 py-2 text-sm font-semibold text-on-accent transition-all duration-fast ease-emphasized hover:-translate-y-px hover:shadow-med sm:inline-block"
-            >
+            <a href="#collaborate" className="btn btn-filled hidden sm:inline-flex">
               Work with me
             </a>
 
@@ -125,57 +157,67 @@ export function Nav() {
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? 'Close menu' : 'Open menu'}
               aria-expanded={open}
-              className="grid h-9 w-9 place-items-center rounded-full border border-line text-secondary md:hidden"
+              className="icon-btn bg-secondary-container text-on-secondary-container lg:hidden"
             >
-              {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </nav>
       </header>
 
       {/* Mobile sheet */}
-      <div
-        className={[
-          'fixed inset-0 z-30 md:hidden',
-          open ? 'pointer-events-auto' : 'pointer-events-none',
-        ].join(' ')}
-        aria-hidden={!open}
-      >
-        <div
-          onClick={() => setOpen(false)}
-          className={[
-            'absolute inset-0 bg-overlay transition-opacity duration-medium',
-            open ? 'opacity-100' : 'opacity-0',
-          ].join(' ')}
-        />
-        <div
-          className={[
-            'absolute inset-x-3 top-[4.5rem] rounded-container border border-line bg-popover p-3 shadow-high transition-all duration-medium ease-emphasized',
-            open ? 'translate-y-0 opacity-100' : '-translate-y-3 opacity-0',
-          ].join(' ')}
-        >
-          <ul className="flex flex-col">
-            {navItems.map((item) => (
-              <li key={item.href}>
-                <a
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className="block rounded-element px-4 py-3 text-base text-secondary transition-colors duration-fast hover:bg-tint-hover hover:text-primary"
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-          <a
-            href="#collaborate"
-            onClick={() => setOpen(false)}
-            className="mt-2 block rounded-element bg-accent-bg px-4 py-3 text-center text-base font-semibold text-on-accent"
-          >
-            Work with me
-          </a>
-        </div>
-      </div>
+      <AnimatePresence>
+        {open && (
+          <div className="fixed inset-0 z-30 lg:hidden">
+            <motion.div
+              onClick={() => setOpen(false)}
+              className="absolute inset-0 bg-scrim"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+            <motion.div
+              className="absolute inset-x-3 top-[5.25rem] origin-top rounded-xl bg-surface-high p-3 shadow-e4 sm:inset-x-5"
+              initial={reduced ? { opacity: 0 } : { opacity: 0, scaleY: 0.7, y: -12 }}
+              animate={{ opacity: 1, scaleY: 1, y: 0 }}
+              exit={reduced ? { opacity: 0 } : { opacity: 0, scaleY: 0.85, y: -8 }}
+              transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+            >
+              <ul className="flex flex-col gap-1">
+                {navItems.map((item, i) => (
+                  <motion.li
+                    key={item.href}
+                    initial={reduced ? false : { opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.03 * i, type: 'spring', stiffness: 400, damping: 30 }}
+                  >
+                    <a
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className={[
+                        'type-headline flex items-center justify-between rounded-lg px-5 py-4 text-title-lg transition-colors duration-short',
+                        active === item.href
+                          ? 'bg-secondary-container text-on-secondary-container'
+                          : 'text-on-surface hover:bg-on-surface/[0.06]',
+                      ].join(' ')}
+                    >
+                      {item.label}
+                      <ArrowRight className="h-5 w-5 opacity-60" />
+                    </a>
+                  </motion.li>
+                ))}
+              </ul>
+              <a
+                href="#collaborate"
+                onClick={() => setOpen(false)}
+                className="btn btn-filled btn-lg mt-3 w-full"
+              >
+                Work with me
+              </a>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

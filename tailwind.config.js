@@ -1,15 +1,21 @@
 /**
- * Tailwind ← Astryx bridge.
+ * Tailwind ← Material 3 bridge.
  *
- * Astryx ships a `tailwind-theme.css` bridge for Tailwind v4. We're on v3 (so the
- * site still builds on Node 18), so the same mapping lives here instead: every
- * utility resolves to an Astryx CSS custom property, which means theme switching
- * (light/dark, or swapping the theme package) just works — nothing is hard-coded.
+ * Every colour utility resolves to an M3 colour role defined in
+ * src/styles/theme-m3.css, so `bg-primary-container text-on-primary-container`
+ * reads exactly like the M3 spec and follows light/dark automatically.
  *
- * Astryx's own reset is used instead of Tailwind Preflight. Astryx styles live in
- * cascade layers (`reset` → `astryx-base` → `astryx-theme`); Tailwind v3 emits
- * unlayered CSS, which always wins, so utilities reliably override components.
+ * Astryx's reset is still used instead of Tailwind Preflight. It lives in the
+ * `reset` cascade layer; Tailwind v3 emits unlayered CSS, which always wins.
  */
+
+const role = (name) => `var(--md-${name})`
+
+/** Colour role that also supports Tailwind's `/opacity` modifier, via color-mix. */
+const color = (name) => ({ opacityValue }) =>
+  opacityValue === undefined || opacityValue === '1'
+    ? role(name)
+    : `color-mix(in srgb, ${role(name)} calc(${opacityValue} * 100%), transparent)`
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -21,146 +27,126 @@ export default {
   theme: {
     extend: {
       colors: {
-        // --- Text ---------------------------------------------------------
-        primary: 'var(--color-text-primary)',
-        secondary: 'var(--color-text-secondary)',
-        muted: 'var(--color-text-muted)',
-        disabled: 'var(--color-text-disabled)',
-        accent: 'var(--color-text-accent)',
+        primary: color('primary'),
+        'on-primary': color('on-primary'),
+        'primary-container': color('primary-container'),
+        'on-primary-container': color('on-primary-container'),
+        'primary-fixed-dim': color('primary-fixed-dim'),
 
-        // --- Surfaces -----------------------------------------------------
-        body: 'var(--color-background-body)',
-        surface: 'var(--color-background-surface)',
-        card: 'var(--color-background-card)',
-        popover: 'var(--color-background-popover)',
-        subtle: 'var(--color-background-muted)',
-        inverted: 'var(--color-background-inverted)',
+        secondary: color('secondary'),
+        'on-secondary': color('on-secondary'),
+        'secondary-container': color('secondary-container'),
+        'on-secondary-container': color('on-secondary-container'),
 
-        // --- Interactive --------------------------------------------------
-        'accent-bg': 'var(--color-accent)',
-        'accent-muted': 'var(--color-accent-muted)',
-        'on-accent': 'var(--color-on-accent)',
-        'tint-hover': 'var(--color-tint-hover)',
-        'overlay-hover': 'var(--color-overlay-hover)',
+        tertiary: color('tertiary'),
+        'on-tertiary': color('on-tertiary'),
+        'tertiary-container': color('tertiary-container'),
+        'on-tertiary-container': color('on-tertiary-container'),
 
-        // --- Borders ------------------------------------------------------
-        line: 'var(--color-border)',
-        'line-strong': 'var(--color-border-emphasized)',
+        surface: color('surface'),
+        'surface-lowest': color('surface-container-lowest'),
+        'surface-low': color('surface-container-low'),
+        'surface-container': color('surface-container'),
+        'surface-high': color('surface-container-high'),
+        'surface-highest': color('surface-container-highest'),
+        'on-surface': color('on-surface'),
+        'on-surface-variant': color('on-surface-variant'),
+        outline: color('outline'),
+        'outline-variant': color('outline-variant'),
 
-        // --- Brand ramps ---------------------------------------------------
-        twilight: {
-          DEFAULT: 'var(--twilight-500)',
-          100: 'var(--twilight-100)',
-          200: 'var(--twilight-200)',
-          300: 'var(--twilight-300)',
-          400: 'var(--twilight-400)',
-          500: 'var(--twilight-500)',
-          600: 'var(--twilight-600)',
-          800: 'var(--twilight-800)',
-          900: 'var(--twilight-900)',
-        },
-        teal: {
-          DEFAULT: 'var(--teal-500)',
-          100: 'var(--teal-100)',
-          300: 'var(--teal-300)',
-          500: 'var(--teal-500)',
-          700: 'var(--teal-700)',
-          900: 'var(--teal-900)',
-        },
-        surf: {
-          DEFAULT: 'var(--surf-500)',
-          100: 'var(--surf-100)',
-          300: 'var(--surf-300)',
-          500: 'var(--surf-500)',
-          700: 'var(--surf-700)',
-          900: 'var(--surf-900)',
-        },
-        frost: 'var(--frost-500)',
-        cyan: 'var(--cyan-500)',
+        'inverse-surface': color('inverse-surface'),
+        'inverse-on-surface': color('inverse-on-surface'),
+        'inverse-primary': color('inverse-primary'),
+        scrim: color('scrim'),
       },
 
       fontFamily: {
-        sans: 'var(--font-family-body)',
-        display: 'var(--font-family-heading)',
-        mono: 'var(--font-family-code)',
+        sans: role('font-plain'),
+        display: role('font-brand'),
+        mono: role('font-code'),
       },
 
+      // M3 type scale, with the display sizes nudged up for a marketing page.
       fontSize: {
-        // Astryx ramp, re-scaled for a marketing surface in theme-ocean.css
-        '2xs': ['var(--font-size-2xs)', { lineHeight: '1.5' }],
-        xs: ['var(--font-size-xs)', { lineHeight: '1.5' }],
-        sm: ['var(--font-size-sm)', { lineHeight: '1.6' }],
-        base: ['var(--font-size-base)', { lineHeight: '1.65' }],
-        lg: ['var(--font-size-lg)', { lineHeight: '1.6' }],
-        xl: ['var(--font-size-xl)', { lineHeight: '1.45' }],
-        '2xl': ['var(--font-size-2xl)', { lineHeight: '1.3' }],
-        '3xl': ['var(--font-size-3xl)', { lineHeight: '1.22' }],
-        '4xl': ['var(--font-size-4xl)', { lineHeight: '1.14' }],
-        '5xl': ['var(--font-size-5xl)', { lineHeight: '1.08' }],
-        '6xl': ['var(--font-size-6xl)', { lineHeight: '1.04' }],
+        'label-sm': ['0.6875rem', { lineHeight: '1rem', letterSpacing: '0.04em' }],
+        'label-md': ['0.75rem', { lineHeight: '1rem', letterSpacing: '0.03em' }],
+        'label-lg': ['0.875rem', { lineHeight: '1.25rem', letterSpacing: '0.01em' }],
+        'body-sm': ['0.8125rem', { lineHeight: '1.25rem' }],
+        'body-md': ['0.9375rem', { lineHeight: '1.5rem' }],
+        'body-lg': ['1.0625rem', { lineHeight: '1.7rem' }],
+        'title-sm': ['0.875rem', { lineHeight: '1.25rem' }],
+        'title-md': ['1rem', { lineHeight: '1.5rem' }],
+        'title-lg': ['1.375rem', { lineHeight: '1.75rem' }],
+        'headline-sm': ['1.5rem', { lineHeight: '2rem' }],
+        'headline-md': ['1.75rem', { lineHeight: '2.25rem' }],
+        'headline-lg': ['2.25rem', { lineHeight: '2.6rem' }],
+        'display-sm': ['2.75rem', { lineHeight: '1.08' }],
+        'display-md': ['3.5rem', { lineHeight: '1.04' }],
+        'display-lg': ['4.5rem', { lineHeight: '1' }],
+        'display-xl': ['5.75rem', { lineHeight: '0.96' }],
       },
 
       borderRadius: {
-        none: 'var(--radius-none)',
-        inner: 'var(--radius-inner)',
-        element: 'var(--radius-element)',
-        container: 'var(--radius-container)',
-        page: 'var(--radius-page)',
-        full: 'var(--radius-full)',
+        xs: role('shape-xs'),
+        sm: role('shape-sm'),
+        md: role('shape-md'),
+        lg: role('shape-lg'),
+        'lg-inc': role('shape-lg-inc'),
+        xl: role('shape-xl'),
+        'xl-inc': role('shape-xl-inc'),
+        '2xl': role('shape-2xl'),
+        full: role('shape-full'),
       },
 
       boxShadow: {
-        low: 'var(--shadow-low)',
-        med: 'var(--shadow-med)',
-        high: 'var(--shadow-high)',
-        glow: '0 0 0 1px var(--color-border), 0 18px 48px -18px var(--accent-glow)',
-      },
-
-      spacing: {
-        1: 'var(--spacing-1)',
-        2: 'var(--spacing-2)',
-        3: 'var(--spacing-3)',
-        4: 'var(--spacing-4)',
-        5: 'var(--spacing-5)',
-        6: 'var(--spacing-6)',
-        7: 'var(--spacing-7)',
-        8: 'var(--spacing-8)',
-        9: 'var(--spacing-9)',
-        10: 'var(--spacing-10)',
-        11: 'var(--spacing-11)',
-        12: 'var(--spacing-12)',
-      },
-
-      transitionDuration: {
-        fast: 'var(--duration-fast)',
-        medium: 'var(--duration-medium)',
-        slow: 'var(--duration-slow)',
+        e1: role('elevation-1'),
+        e2: role('elevation-2'),
+        e3: role('elevation-3'),
+        e4: role('elevation-4'),
       },
 
       transitionTimingFunction: {
-        standard: 'var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))',
-        emphasized: 'cubic-bezier(0.22, 1, 0.36, 1)',
+        spring: role('spring'),
+        'spring-fast': role('spring-fast'),
+        emphasized: role('ease-emphasized'),
+        standard: role('ease-standard'),
+      },
+
+      transitionDuration: {
+        short: '200ms',
+        medium: '400ms',
+        long: '600ms',
       },
 
       maxWidth: {
-        content: '72rem',
-        prose: '46rem',
+        content: '76rem',
+        prose: '44rem',
       },
 
       keyframes: {
         'fade-up': {
-          from: { opacity: '0', transform: 'translateY(12px)' },
+          from: { opacity: '0', transform: 'translateY(16px) scale(0.98)' },
           to: { opacity: '1', transform: 'none' },
         },
         marquee: {
           from: { transform: 'translateX(0)' },
           to: { transform: 'translateX(-50%)' },
         },
+        spin: {
+          to: { rotate: '360deg' },
+        },
+        pulse: {
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.9)', opacity: '0' },
+        },
       },
 
       animation: {
-        'fade-up': 'fade-up var(--duration-slow) cubic-bezier(0.22, 1, 0.36, 1) both',
-        marquee: 'marquee 42s linear infinite',
+        'fade-up': 'fade-up 700ms cubic-bezier(0.2, 0, 0, 1) both',
+        marquee: 'marquee 46s linear infinite',
+        'spin-slow': 'spin 40s linear infinite',
+        'spin-slower': 'spin 70s linear infinite',
+        pulse: 'pulse 2.2s cubic-bezier(0.2, 0, 0, 1) infinite',
       },
     },
   },
