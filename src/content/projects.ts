@@ -120,6 +120,57 @@ export const projects: Project[] = [
   },
 
   {
+    id: 'gymflow',
+    name: 'GymFlow',
+    kicker: 'Workout tracker',
+    headline: 'Train it. Log it. See it.',
+    description:
+      'A gym tracker for people who lift: log every set, follow a real plan, and watch strength climb week over week. A muscle heat map shows what you have trained and what you keep skipping. Everything saves on the device first and syncs when you are back online.',
+    status: 'Live on the App Store · Google Play soon',
+    platforms: ['iOS', 'Android'],
+    watermark: 'Compose Multiplatform',
+    // GymFlow red, with the app's blue as the secondary.
+    accent: {
+      base: '#DE0606',
+      deep: '#B80404',
+      spark: '#7FA6FF',
+      panelLight: '#FFF4F2',
+      panelDark: '#1D1515',
+      onPanelLight: '#AC0202',
+      onPanelDark: '#FFB4AB',
+    },
+    bullets: [
+      'One Compose Multiplatform UI shared across Android and iOS',
+      'Offline-first: Room on device, synced to Supabase when back online',
+      'Muscle heat map and personal records computed as you log',
+    ],
+    stack: ['Kotlin Multiplatform', 'Compose Multiplatform', 'Room', 'Supabase', 'Ktor'],
+    stores: [
+      {
+        kind: 'appStore',
+        href: 'https://apps.apple.com/us/app/gymflow-gym-workout-tracker/id6807045220',
+      },
+    ],
+    links: [{ label: 'gymflow', href: 'https://hieuwu.github.io/gymflow-app/' }],
+    shots: [
+      {
+        src: '/assets/showcases/gymflow/android/home-your-training.webp',
+        alt: 'GymFlow home on Android with training totals and a completed Push/Pull/Legs week',
+        platform: 'android',
+        w: 720,
+        h: 1516,
+      },
+      {
+        src: '/assets/showcases/gymflow/ios/progress-body-heatmap.webp',
+        alt: 'GymFlow muscle heat map on iOS, front and back, over the last 30 days',
+        platform: 'ios',
+        w: 720,
+        h: 1361,
+      },
+    ],
+  },
+
+  {
     id: 'supabuckt',
     name: 'Supabuckt',
     kicker: 'Storage client',
