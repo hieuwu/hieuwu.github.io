@@ -27,6 +27,7 @@ export const experience: Role[] = [
     company: 'Grab',
     title: 'Senior Software Engineer, Android',
     period: 'August 2026 to present',
+    location: 'Ho Chi Minh City',
     products: ['Mobile Shared Libraries'],
   },
   {
