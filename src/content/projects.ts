@@ -65,61 +65,6 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    id: 'kudos-snap',
-    name: 'Kudos Snap',
-    kicker: 'AI recognition',
-    headline: 'Recognition that sounds like you meant it.',
-    description:
-      'Pick a teammate and a tone. The app drafts a specific, non-generic kudos you can send or edit, then keeps track of who you have recognised. One Kotlin Multiplatform codebase, shipped to both stores in the same release.',
-    status: 'Live on both stores',
-    platforms: ['iOS', 'Android'],
-    watermark: 'Kotlin Multiplatform',
-    // Solar Blaze / Volt Yellow over Radiant White and Void Black.
-    accent: {
-      base: '#FF3D00',
-      deep: '#D63000',
-      spark: '#FFE57F',
-      panelLight: '#FFF9E6',
-      panelDark: '#232323',
-      onPanelLight: '#A32400',
-      onPanelDark: '#FFE57F',
-    },
-    bullets: [
-      'Shared KMP domain, native Compose and SwiftUI on top',
-      'AI drafting behind a Supabase Edge Function, so no keys ship in the client',
-      'RevenueCat entitlements resolved server-side, consistent across stores',
-    ],
-    stack: ['Kotlin Multiplatform', 'Jetpack Compose', 'SwiftUI', 'Supabase', 'RevenueCat'],
-    stores: [
-      {
-        kind: 'appStore',
-        href: 'https://apps.apple.com/us/app/kudos-snap-ai-kudos-message/id6759520257',
-      },
-      {
-        kind: 'playStore',
-        href: 'https://play.google.com/store/apps/details?id=com.crafted.kudossnap.android',
-      },
-    ],
-    links: [{ label: 'kudossnap.app', href: 'https://kudossnap.app/' }],
-    shots: [
-      {
-        src: '/assets/showcases/kudossnap/ios/kudos-feed.webp',
-        alt: 'Kudos Snap feed on iOS showing sent kudos with tone tags',
-        platform: 'ios',
-        w: 720,
-        h: 1432,
-      },
-      {
-        src: '/assets/showcases/kudossnap/android/give-kudos.webp',
-        alt: 'Give kudos composer on Android',
-        platform: 'android',
-        w: 720,
-        h: 1516,
-      },
-    ],
-  },
-
-  {
     id: 'gymflow',
     name: 'GymFlow',
     kicker: 'Workout tracker',
@@ -221,6 +166,61 @@ export const projects: Project[] = [
         platform: 'android',
         w: 720,
         h: 1521,
+      },
+    ],
+  },
+
+  {
+    id: 'kudos-snap',
+    name: 'Kudos Snap',
+    kicker: 'AI recognition',
+    headline: 'Recognition that sounds like you meant it.',
+    description:
+      'Pick a teammate and a tone. The app drafts a specific, non-generic kudos you can send or edit, then keeps track of who you have recognised. One Kotlin Multiplatform codebase, shipped to both stores in the same release.',
+    status: 'Live on both stores',
+    platforms: ['iOS', 'Android'],
+    watermark: 'Kotlin Multiplatform',
+    // Solar Blaze / Volt Yellow over Radiant White and Void Black.
+    accent: {
+      base: '#FF3D00',
+      deep: '#D63000',
+      spark: '#FFE57F',
+      panelLight: '#FFF9E6',
+      panelDark: '#232323',
+      onPanelLight: '#A32400',
+      onPanelDark: '#FFE57F',
+    },
+    bullets: [
+      'Shared KMP domain, native Compose and SwiftUI on top',
+      'AI drafting behind a Supabase Edge Function, so no keys ship in the client',
+      'RevenueCat entitlements resolved server-side, consistent across stores',
+    ],
+    stack: ['Kotlin Multiplatform', 'Jetpack Compose', 'SwiftUI', 'Supabase', 'RevenueCat'],
+    stores: [
+      {
+        kind: 'appStore',
+        href: 'https://apps.apple.com/us/app/kudos-snap-ai-kudos-message/id6759520257',
+      },
+      {
+        kind: 'playStore',
+        href: 'https://play.google.com/store/apps/details?id=com.crafted.kudossnap.android',
+      },
+    ],
+    links: [{ label: 'kudossnap.app', href: 'https://kudossnap.app/' }],
+    shots: [
+      {
+        src: '/assets/showcases/kudossnap/ios/kudos-feed.webp',
+        alt: 'Kudos Snap feed on iOS showing sent kudos with tone tags',
+        platform: 'ios',
+        w: 720,
+        h: 1432,
+      },
+      {
+        src: '/assets/showcases/kudossnap/android/give-kudos.webp',
+        alt: 'Give kudos composer on Android',
+        platform: 'android',
+        w: 720,
+        h: 1516,
       },
     ],
   },

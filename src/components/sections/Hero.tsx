@@ -27,11 +27,11 @@ const MARQUEE = [
   'RevenueCat',
 ]
 
-/** Small platform tiles that orbit the portrait. */
+/** Small platform tiles pinned to the corners of the name card. */
 const ORBIT: { tech: string; shape: ShapeName; className: string; delay: number }[] = [
-  { tech: 'Kotlin', shape: 'squircle', className: '-left-3 top-[10%] sm:-left-7', delay: 0 },
-  { tech: 'Android', shape: 'cookie-6', className: '-right-3 top-[34%] sm:-right-7', delay: 1.2 },
-  { tech: 'Apple', shape: 'clover', className: '-left-3 bottom-[22%] sm:-left-7', delay: 2.1 },
+  { tech: 'Kotlin', shape: 'squircle', className: '-left-5 -top-6', delay: 0 },
+  { tech: 'Android', shape: 'cookie-6', className: '-right-5 -top-6', delay: 1.2 },
+  { tech: 'Apple', shape: 'clover', className: '-bottom-5 -right-4', delay: 2.1 },
 ]
 
 /**
@@ -115,22 +115,9 @@ export function Hero() {
         <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-10">
           {/* ---------------------------------------------------------- Copy */}
           <div>
-            {profile.available && (
-              <p
-                {...rise(0)}
-                className="type-label inline-flex animate-fade-up items-center gap-2.5 rounded-full bg-surface-lowest py-2 pl-3 pr-4 text-label-lg text-on-surface shadow-e1"
-              >
-                <span className="relative grid h-2.5 w-2.5 place-items-center">
-                  <span className="absolute inset-0 animate-pulse rounded-full bg-[#1e8e3e]" />
-                  <span className="relative h-2.5 w-2.5 rounded-full bg-[#1e8e3e]" />
-                </span>
-                {profile.availableLabel}
-              </p>
-            )}
-
             <h1
               {...rise(80)}
-              className="type-display relative z-0 mt-7 max-w-[13ch] animate-fade-up text-display-sm text-on-surface sm:text-display-lg xl:text-display-xl"
+              className="type-display relative z-0 max-w-[13ch] animate-fade-up text-display-sm text-on-surface sm:text-display-lg xl:text-display-xl"
             >
               <Headline text={profile.headline} />
             </h1>
@@ -162,19 +149,19 @@ export function Hero() {
                 return (
                   <motion.li
                     key={s.label}
-                    whileHover={reduced ? undefined : { y: -4, rotate: -6 }}
-                    whileTap={reduced ? undefined : { scale: 0.88 }}
+                    whileHover={reduced ? undefined : { y: -4 }}
+                    whileTap={reduced ? undefined : { scale: 0.94 }}
                     transition={SPRING.fast}
                   >
                     <a
                       href={s.href}
                       target="_blank"
                       rel="noreferrer noopener"
-                      aria-label={s.label}
-                      title={s.label}
-                      className="icon-btn h-12 w-12 bg-surface-container text-on-surface-variant hover:text-on-surface"
+                      aria-label={`${s.label}: ${s.handle}`}
+                      className="btn btn-sm group/social bg-surface-container pl-3 text-on-surface-variant hover:text-on-surface"
                     >
-                      <Icon className="h-5 w-5" />
+                      <Icon className="h-[1.125rem] w-[1.125rem] transition-transform duration-medium ease-spring-fast group-hover/social:-rotate-12" />
+                      <span>{s.handle}</span>
                     </a>
                   </motion.li>
                 )
@@ -196,43 +183,10 @@ export function Hero() {
                 />
               </div>
               </Tilt>
-
-              {/* Floating platform tiles: they parallax nearest the viewer, and
-                  on desktop can be flung around and spring back. */}
-              {ORBIT.map((o) => (
-                <motion.div
-                  key={o.tech}
-                  className={`absolute z-10 h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem] ${o.className}`}
-                  style={{ x: midX, y: midY }}
-                >
-                  <motion.div
-                    className={`h-full w-full drop-shadow-[0_8px_16px_rgba(15,76,129,0.18)] ${fine ? 'cursor-grab touch-none' : ''}`}
-                    {...(fine && !reduced
-                      ? {
-                          drag: true,
-                          dragSnapToOrigin: true,
-                          dragElastic: 0.7,
-                          dragTransition: { bounceStiffness: 300, bounceDamping: 12 },
-                          whileHover: { scale: 1.12, rotate: 12 },
-                          whileDrag: { scale: 1.2, cursor: 'grabbing' },
-                          transition: SPRING.fast,
-                        }
-                      : {})}
-                  >
-                    <motion.div className="h-full w-full" {...float(o.delay)}>
-                      <Shape
-                        name={o.shape}
-                        className="grid h-full w-full place-items-center bg-surface-lowest text-on-surface"
-                      >
-                        <TechIcon tech={o.tech} brand className="h-7 w-7" />
-                      </Shape>
-                    </motion.div>
-                  </motion.div>
-                </motion.div>
-              ))}
             </motion.div>
 
-            {/* Identity card, overlapping the bottom of the portrait. */}
+            {/* Identity card, overlapping the bottom of the portrait, with the
+                platform tiles stuck to its corners. */}
             <div className="relative z-10 mx-auto -mt-8 w-[88%] rounded-xl bg-surface-lowest px-6 py-5 text-center shadow-e3">
               <p className="type-headline text-headline-sm text-on-surface">{profile.name}</p>
               <p className="type-label mt-1 text-title-sm text-primary">
@@ -242,6 +196,39 @@ export function Hero() {
                 <MapPin className="h-4 w-4 shrink-0" />
                 {profile.location}
               </p>
+
+                {/* Platform tiles pinned to the card's corners. They bob gently,
+                    and on desktop can be flung around and spring back. */}
+                {ORBIT.map((o) => (
+                  <motion.div
+                    key={o.tech}
+                    className={`absolute z-10 h-12 w-12 sm:h-14 sm:w-14 ${o.className}`}
+                  >
+                    <motion.div
+                      className={`h-full w-full drop-shadow-[0_8px_16px_rgba(15,76,129,0.18)] ${fine ? 'cursor-grab touch-none' : ''}`}
+                      {...(fine && !reduced
+                        ? {
+                            drag: true,
+                            dragSnapToOrigin: true,
+                            dragElastic: 0.7,
+                            dragTransition: { bounceStiffness: 300, bounceDamping: 12 },
+                            whileHover: { scale: 1.12, rotate: 12 },
+                            whileDrag: { scale: 1.2, cursor: 'grabbing' },
+                            transition: SPRING.fast,
+                          }
+                        : {})}
+                    >
+                      <motion.div className="h-full w-full" {...float(o.delay)}>
+                        <Shape
+                          name={o.shape}
+                          className="grid h-full w-full place-items-center bg-surface-lowest text-on-surface"
+                        >
+                          <TechIcon tech={o.tech} brand className="h-6 w-6" />
+                        </Shape>
+                      </motion.div>
+                    </motion.div>
+                  </motion.div>
+                ))}
             </div>
           </div>
         </div>

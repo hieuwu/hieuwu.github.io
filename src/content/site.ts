@@ -59,12 +59,13 @@ export const socials: SocialLink[] = [
   },
 ]
 
+/** `icon` is a key in the ICONS registry (components/ui/icons.tsx). */
 export const navItems = [
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Open Source', href: '#open-source' },
-  { label: 'Writing', href: '#writing' },
-  { label: 'Experience', href: '#experience' },
+  { label: 'About', href: '#about', icon: 'user' },
+  { label: 'Skills', href: '#skills', icon: 'wrench' },
+  { label: 'Projects', href: '#projects', icon: 'layout-grid' },
+  { label: 'Open Source', href: '#open-source', icon: 'git-pull-request' },
+  { label: 'Writing', href: '#writing', icon: 'pen-line' },
+  { label: 'Experience', href: '#experience', icon: 'briefcase' },
 ] as const
 

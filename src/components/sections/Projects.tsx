@@ -8,7 +8,7 @@ export function Projects() {
       id="projects"
       eyebrow="Projects"
       title="Built, shipped, and still running."
-      lead="An AI feature that had to stay private, a workout tracker that keeps logging with no gym Wi-Fi, a storage client that had to feel native twice, and a converter that had to work with no signal."
+      lead="A workout tracker that keeps logging with no gym Wi-Fi, a storage client that had to feel native twice, an AI feature that had to stay private, and a converter that had to work with no signal."
     >
       <div className="flex flex-col gap-6 sm:gap-8">
         {projects.map((project, i) => (

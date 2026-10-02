@@ -1,10 +1,12 @@
 import {
   BarChart3,
   Bell,
+  Briefcase,
   CreditCard,
   Database,
   FolderTree,
   Gauge,
+  GitPullRequest,
   Github,
   KeyRound,
   Layers,
@@ -17,8 +19,10 @@ import {
   Share2,
   Smartphone,
   Sparkles,
+  User,
   Watch,
   WifiOff,
+  Wrench,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -45,6 +49,11 @@ export const ICONS = {
   'layout-grid': LayoutGrid,
   watch: Watch,
   bell: Bell,
+  // Navigation
+  user: User,
+  wrench: Wrench,
+  'git-pull-request': GitPullRequest,
+  briefcase: Briefcase,
 } as const satisfies Record<string, LucideIcon>
 
 /** lucide has no X/Twitter glyph in recent versions, so this is the current mark. */

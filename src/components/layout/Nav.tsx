@@ -5,6 +5,7 @@ import { navItems, profile } from '@/content/site'
 import { useTheme } from '@/hooks/useTheme'
 import { Shape } from '@/components/ui/Shape'
 import { Magnetic } from '@/components/ui/motion'
+import { ICONS } from '@/components/ui/icons'
 
 /** Logo mark: a 12-scallop cookie that blooms into a flower on hover. */
 export function Monogram({ size = 'h-10 w-10' }: { size?: string }) {
@@ -24,10 +25,45 @@ export function Monogram({ size = 'h-10 w-10' }: { size?: string }) {
   )
 }
 
+type NavIconProps = { icon: (typeof navItems)[number]['icon']; active: boolean; className?: string }
+
+/**
+ * Destination icon. When its tab becomes the selected one it pops and wiggles
+ * on a bouncy spring and takes a heavier stroke; on hover it lifts. In the
+ * toolbar it only renders on the selected tab; the mobile sheet shows them all.
+ */
+function NavIcon({ icon, active, className = 'h-[1.125rem] w-[1.125rem]' }: NavIconProps) {
+  const reduced = useReducedMotion()
+  const Icon = ICONS[icon]
+  return (
+    <motion.span
+      aria-hidden
+      className="relative grid place-items-center"
+      animate={
+        reduced
+          ? undefined
+          : active
+            ? { scale: [1, 1.38, 0.92, 1], rotate: [0, -14, 8, 0] }
+            : { scale: 1, rotate: 0 }
+      }
+      transition={{ duration: 0.55, ease: [0.2, 0, 0, 1] }}
+    >
+      <Icon
+        className={`${className} transition-[stroke-width] duration-short group-hover/nav:-translate-y-0.5`}
+        strokeWidth={active ? 2.6 : 2}
+        style={{ transition: 'translate 300ms var(--md-spring-fast)' }}
+      />
+    </motion.span>
+  )
+}
+
 /**
  * An M3 Expressive floating toolbar: a single pill that hovers over the page,
  * with the active destination marked by a tonal indicator that springs between
  * items (shared layout animation).
+ *
+ * Unselected tabs are text only. The selected tab also grows its icon in
+ * beside the label, and the tab widths spring as the selection moves.
  */
 export function Nav() {
   const { theme, toggle } = useTheme()
@@ -103,11 +139,12 @@ export function Nav() {
             {navItems.map((item) => {
               const isActive = active === item.href
               return (
-                <li key={item.href}>
+                <motion.li key={item.href} layout={!reduced} transition={spring}>
                   <a
                     href={item.href}
+                    aria-current={isActive ? 'true' : undefined}
                     className={[
-                      'type-label relative flex h-11 items-center rounded-full px-4 text-label-lg transition-colors duration-short',
+                      'type-label group/nav relative flex h-11 items-center rounded-full px-3 text-label-lg transition-colors duration-short xl:px-4',
                       isActive
                         ? 'text-on-secondary-container'
                         : 'text-on-surface-variant hover:bg-on-surface/[0.06] hover:text-on-surface',
@@ -121,9 +158,40 @@ export function Nav() {
                         className="absolute inset-0 rounded-full bg-secondary-container"
                       />
                     )}
-                    <span className="relative">{item.label}</span>
+                    {/* Icon only on the selected tab: it grows in from zero
+                        width, spinning and popping on a bouncy spring, and
+                        shrinks away again when the selection moves on. */}
+                    <AnimatePresence initial={false}>
+                      {isActive && (
+                        <motion.span
+                          key="icon"
+                          aria-hidden
+                          className="relative grid shrink-0 place-items-center overflow-visible"
+                          initial={reduced ? false : { width: 0, opacity: 0, scale: 0, rotate: -120 }}
+                          animate={{ width: 'auto', opacity: 1, scale: 1, rotate: 0 }}
+                          exit={reduced ? undefined : { width: 0, opacity: 0, scale: 0, rotate: 90 }}
+                          transition={{
+                            width: spring,
+                            opacity: { duration: 0.15 },
+                            scale: { type: 'spring', stiffness: 420, damping: 14 },
+                            rotate: { type: 'spring', stiffness: 260, damping: 13 },
+                          }}
+                        >
+                          <span className="pr-2">
+                            <NavIcon icon={item.icon} active />
+                          </span>
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                    <motion.span
+                      layout={reduced ? false : 'position'}
+                      transition={spring}
+                      className={`relative whitespace-nowrap ${isActive ? 'font-bold' : ''}`}
+                    >
+                      {item.label}
+                    </motion.span>
                   </a>
-                </li>
+                </motion.li>
               )
             })}
           </ul>
@@ -198,13 +266,24 @@ export function Nav() {
                       href={item.href}
                       onClick={() => setOpen(false)}
                       className={[
-                        'type-headline flex items-center justify-between rounded-lg px-5 py-4 text-title-lg transition-colors duration-short',
+                        'type-headline group/nav flex items-center gap-4 rounded-lg px-4 py-3 text-title-lg transition-colors duration-short',
                         active === item.href
                           ? 'bg-secondary-container text-on-secondary-container'
                           : 'text-on-surface hover:bg-on-surface/[0.06]',
                       ].join(' ')}
                     >
-                      {item.label}
+                      <span
+                        className={[
+                          'grid h-10 w-10 shrink-0 place-items-center rounded-full transition-[border-radius,background-color] duration-medium',
+                          active === item.href
+                            ? 'rounded-md bg-primary text-on-primary'
+                            : 'bg-surface-container text-on-surface-variant',
+                        ].join(' ')}
+                        style={{ transitionTimingFunction: 'var(--md-spring-fast)' }}
+                      >
+                        <NavIcon icon={item.icon} active={active === item.href} className="h-5 w-5" />
+                      </span>
+                      <span className="flex-1">{item.label}</span>
                       <ArrowRight className="h-5 w-5 opacity-60" />
                     </a>
                   </motion.li>
