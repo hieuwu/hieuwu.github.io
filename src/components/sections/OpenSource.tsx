@@ -3,6 +3,7 @@ import { Section } from '@/components/ui/Section'
 import { Reveal } from '@/components/ui/Reveal'
 import { Shape } from '@/components/ui/Shape'
 import { openSource } from '@/content/openSource'
+import { Magnetic, Tilt } from '@/components/ui/motion'
 
 export function OpenSource() {
   return (
@@ -13,6 +14,7 @@ export function OpenSource() {
       title="I fix the libraries I depend on."
       lead="When something is missing in a library my apps rely on, the fix belongs upstream. These are the repos where that has happened."
       aside={
+        <Magnetic>
         <a
           href="https://github.com/hieuwu"
           target="_blank"
@@ -25,11 +27,13 @@ export function OpenSource() {
           All repositories
           <ArrowUpRight className="h-4 w-4 transition-transform duration-medium ease-spring-fast group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </a>
+        </Magnetic>
       }
     >
       <div className="grid gap-3 lg:grid-cols-3">
         {openSource.map((repo, i) => (
           <Reveal key={repo.id} delay={i * 0.07}>
+            <Tilt className="h-full" max={4}>
             <article className="card card-interactive group flex h-full flex-col bg-surface-lowest p-6 sm:p-7">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-4">
@@ -106,6 +110,7 @@ export function OpenSource() {
                 </ul>
               </div>
             </article>
+            </Tilt>
           </Reveal>
         ))}
       </div>

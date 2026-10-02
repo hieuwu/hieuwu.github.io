@@ -3,6 +3,7 @@ import { Section } from '@/components/ui/Section'
 import { Reveal } from '@/components/ui/Reveal'
 import { Shape } from '@/components/ui/Shape'
 import { experience } from '@/content/experience'
+import { Tilt } from '@/components/ui/motion'
 
 export function Experience() {
   return (
@@ -32,6 +33,7 @@ export function Experience() {
               />
             </div>
 
+            <Tilt max={3}>
             <article className="card card-interactive group bg-surface-lowest p-6 sm:p-8">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
@@ -86,6 +88,7 @@ export function Experience() {
                 </ul>
               )}
             </article>
+            </Tilt>
           </Reveal>
         ))}
       </ol>

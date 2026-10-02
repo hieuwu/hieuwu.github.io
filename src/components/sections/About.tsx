@@ -2,6 +2,7 @@ import { Reveal } from '@/components/ui/Reveal'
 import { Shape } from '@/components/ui/Shape'
 import type { ShapeName } from '@/components/ui/shapes'
 import { profile } from '@/content/site'
+import { SplitWords, Tilt } from '@/components/ui/motion'
 
 const PRINCIPLES: {
   n: string
@@ -61,7 +62,7 @@ export function About() {
               About
             </p>
             <h2 className="type-display mt-4 text-display-sm text-on-surface sm:text-display-md">
-              How I work
+              <SplitWords>How I work</SplitWords>
             </h2>
             <p className="mt-6 text-body-lg text-on-surface-variant">{profile.about}</p>
           </Reveal>
@@ -69,6 +70,7 @@ export function About() {
           <ol className="grid gap-3 sm:grid-cols-2 sm:pb-10">
             {PRINCIPLES.map((p, i) => (
               <Reveal as="li" key={p.n} delay={i * 0.07} className={i % 2 === 1 ? 'sm:[translate:0_2.5rem]' : ''}>
+                <Tilt className="h-full">
                 <article className={`card card-interactive group h-full overflow-hidden p-7 ${p.tone}`}>
                   <div className="relative grid h-16 w-16 place-items-center">
                     <Shape
@@ -82,6 +84,7 @@ export function About() {
                   <h3 className="type-headline mt-6 text-headline-sm">{p.title}</h3>
                   <p className="mt-3 text-body-md opacity-80">{p.body}</p>
                 </article>
+                </Tilt>
               </Reveal>
             ))}
           </ol>

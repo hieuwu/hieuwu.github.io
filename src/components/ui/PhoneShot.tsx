@@ -31,6 +31,7 @@ export function PhoneShot({ shot, className, motionProps, style }: Props) {
       height={shot.h}
       loading="lazy"
       decoding="async"
+      draggable={false}
       className="block h-auto w-full"
       style={shot.framed ? { borderRadius: INNER_RADIUS } : undefined}
     />

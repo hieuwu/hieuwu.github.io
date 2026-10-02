@@ -8,10 +8,12 @@ import { OpenSource } from '@/components/sections/OpenSource'
 import { Writing } from '@/components/sections/Writing'
 import { Experience } from '@/components/sections/Experience'
 import { Collaborate } from '@/components/sections/Collaborate'
+import { ScrollProgress } from '@/components/ui/motion'
 
 export default function App() {
   return (
     <>
+      <ScrollProgress />
       <Nav />
       <main id="main">
         <Hero />

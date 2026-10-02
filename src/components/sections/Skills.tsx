@@ -5,6 +5,8 @@ import { Shape } from '@/components/ui/Shape'
 import { ICONS } from '@/components/ui/icons'
 import type { ShapeName } from '@/components/ui/shapes'
 import { skillGroups } from '@/content/skills'
+import { motion, useReducedMotion } from 'motion/react'
+import { POP_CONTAINER, POP_ITEM, Tilt } from '@/components/ui/motion'
 
 /** One shape per card, so the icons read as a family rather than a stamp. */
 const SHAPES: [ShapeName, ShapeName][] = [
@@ -16,6 +18,7 @@ const SHAPES: [ShapeName, ShapeName][] = [
 ]
 
 export function Skills() {
+  const reduced = useReducedMotion()
   return (
     <Section
       id="skills"
@@ -33,6 +36,7 @@ export function Skills() {
           const lead = i === 0
           return (
             <Reveal key={group.id} delay={i * 0.06} className={lead ? 'lg:col-span-2' : ''}>
+              <Tilt className="h-full" max={4}>
               <article
                 className={[
                   'card card-interactive group flex h-full flex-col p-7',
@@ -58,14 +62,26 @@ export function Skills() {
                   </div>
                 </div>
 
-                <ul className="mt-6 flex flex-wrap gap-2">
+                <motion.ul
+                  className="mt-6 flex flex-wrap gap-2"
+                  variants={POP_CONTAINER}
+                  initial={reduced ? false : 'hidden'}
+                  whileInView="shown"
+                  viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+                >
                   {group.skills.map((skill) => (
-                    <li key={skill}>
+                    <motion.li
+                      key={skill}
+                      variants={POP_ITEM}
+                      whileHover={reduced ? undefined : { y: -3, scale: 1.05 }}
+                      whileTap={reduced ? undefined : { scale: 0.92 }}
+                    >
                       <Tag featured={group.featured?.includes(skill)}>{skill}</Tag>
-                    </li>
+                    </motion.li>
                   ))}
-                </ul>
+                </motion.ul>
               </article>
+              </Tilt>
             </Reveal>
           )
         })}

@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { Reveal } from './Reveal'
 import { Shape } from './Shape'
+import { SplitWords } from './motion'
 
 /**
  * Sections alternate between sitting on the page surface and being an inset,
@@ -88,7 +89,7 @@ export function Section({
                   {eyebrow}
                 </p>
                 <h2 className="type-display mt-4 text-display-sm text-on-surface sm:text-display-md">
-                  {title}
+                  <SplitWords>{title}</SplitWords>
                 </h2>
                 {lead ? (
                   <p className="mt-5 text-body-lg text-on-surface-variant">{lead}</p>

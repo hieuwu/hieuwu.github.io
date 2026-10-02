@@ -3,10 +3,16 @@ import { useCallback, useEffect, useState } from 'react'
 export type Theme = 'light' | 'dark'
 
 /**
- * Theme lives on `<html data-theme>`, which is what Astryx's `color-scheme`
- * rules key off. Everything else resolves through CSS `light-dark()`.
- * The initial value is set by an inline script in index.html so there is no
- * flash before hydration; this hook just reads and updates it.
+ * Not `theme`: the previous site wrote that key on every visit (dark for anyone
+ * whose OS was dark), so honouring it would override the light default.
+ */
+export const THEME_KEY = 'color-theme'
+
+/**
+ * Theme lives on `<html data-theme>`, which sets `color-scheme`; everything
+ * else resolves through CSS `light-dark()`. Light is the default. The initial
+ * value is set by an inline script in index.html so there is no flash before
+ * hydration; this hook reads it and only persists an explicit toggle.
  */
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
@@ -16,15 +22,18 @@ export function useTheme() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
-    try {
-      localStorage.setItem('theme', theme)
-    } catch {
-      /* storage can be unavailable in private modes; not worth failing over */
-    }
   }, [theme])
 
   const toggle = useCallback(() => {
-    setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
+    setTheme((t) => {
+      const next = t === 'dark' ? 'light' : 'dark'
+      try {
+        localStorage.setItem(THEME_KEY, next)
+      } catch {
+        /* storage can be unavailable in private modes; not worth failing over */
+      }
+      return next
+    })
   }, [])
 
   return { theme, toggle }

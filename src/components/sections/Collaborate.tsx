@@ -4,6 +4,7 @@ import { MorphLoop, Shape } from '@/components/ui/Shape'
 import type { ShapeName } from '@/components/ui/shapes'
 import { ICONS } from '@/components/ui/icons'
 import { collaborate, offers } from '@/content/collaborate'
+import { Magnetic, SplitWords, Tilt } from '@/components/ui/motion'
 
 const OFFER_SHAPES: [ShapeName, ShapeName][] = [
   ['cookie-9', 'flower'],
@@ -40,7 +41,7 @@ export function Collaborate() {
               Collaboration
             </p>
             <h2 className="type-display mt-4 max-w-[12ch] text-display-md sm:text-display-xl">
-              {collaborate.heading}
+              <SplitWords stagger={0.08}>{collaborate.heading}</SplitWords>
             </h2>
             <p className="mt-6 max-w-prose text-body-lg opacity-85">{collaborate.intro}</p>
           </Reveal>
@@ -51,6 +52,7 @@ export function Collaborate() {
               const [rest, hover] = OFFER_SHAPES[i % OFFER_SHAPES.length]
               return (
                 <Reveal key={offer.title} delay={i * 0.06}>
+                  <Tilt className="h-full">
                   <article className="card card-interactive group flex h-full gap-5 bg-surface-lowest p-6 text-on-surface sm:p-7">
                     <div className="relative grid h-14 w-14 shrink-0 place-items-center">
                       <Shape
@@ -66,6 +68,7 @@ export function Collaborate() {
                       <p className="mt-2 text-body-md text-on-surface-variant">{offer.description}</p>
                     </div>
                   </article>
+                  </Tilt>
                 </Reveal>
               )
             })}
@@ -73,6 +76,7 @@ export function Collaborate() {
 
           <Reveal delay={0.1}>
             <div className="mt-12 flex flex-wrap items-center gap-3">
+              <Magnetic>
               <a
                 href={collaborate.ctaHref}
                 target="_blank"
@@ -82,6 +86,8 @@ export function Collaborate() {
                 {collaborate.ctaLabel}
                 <ArrowUpRight className="h-6 w-6 transition-transform duration-medium ease-spring-fast group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </a>
+              </Magnetic>
+              <Magnetic>
               <a
                 href={collaborate.secondaryHref}
                 target="_blank"
@@ -90,6 +96,7 @@ export function Collaborate() {
               >
                 {collaborate.secondaryLabel}
               </a>
+              </Magnetic>
             </div>
             <p className="mt-6 text-body-md opacity-75">{collaborate.responseNote}</p>
           </Reveal>

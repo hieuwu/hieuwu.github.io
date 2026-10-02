@@ -4,6 +4,7 @@ import { ArrowRight, Menu, Moon, Sun, X } from 'lucide-react'
 import { navItems, profile } from '@/content/site'
 import { useTheme } from '@/hooks/useTheme'
 import { Shape } from '@/components/ui/Shape'
+import { Magnetic } from '@/components/ui/motion'
 
 /** Logo mark: a 12-scallop cookie that blooms into a flower on hover. */
 export function Monogram({ size = 'h-10 w-10' }: { size?: string }) {
@@ -148,9 +149,11 @@ export function Nav() {
               </AnimatePresence>
             </button>
 
-            <a href="#collaborate" className="btn btn-filled hidden sm:inline-flex">
-              Work with me
-            </a>
+            <Magnetic strength={0.25} className="hidden sm:inline-flex">
+              <a href="#collaborate" className="btn btn-filled">
+                Work with me
+              </a>
+            </Magnetic>
 
             <button
               type="button"
