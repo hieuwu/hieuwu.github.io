@@ -16,7 +16,7 @@ export function Footer() {
               <span className="type-headline text-title-lg text-on-surface">{profile.name}</span>
             </div>
             <p className="mt-3 max-w-sm text-body-md text-on-surface-variant">
-              {profile.role} at {profile.company} · {profile.location}
+              {profile.role} · {profile.location}
             </p>
 
             <ul className="mt-6 flex flex-wrap gap-2">

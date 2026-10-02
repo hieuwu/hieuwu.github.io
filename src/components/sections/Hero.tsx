@@ -176,7 +176,7 @@ export function Hero() {
               <div className="h-full overflow-hidden rounded-[2.5rem] bg-surface-container shadow-e2">
                 <img
                   src={profile.avatar}
-                  alt={`${profile.name}, ${profile.role} at ${profile.company}`}
+                  alt={`${profile.name}, ${profile.role}`}
                   width={640}
                   height={800}
                   className="h-full w-full object-cover transition-transform duration-long ease-spring group-hover:scale-[1.03]"
@@ -190,7 +190,7 @@ export function Hero() {
             <div className="relative z-10 mx-auto -mt-8 w-[88%] rounded-xl bg-surface-lowest px-6 py-5 text-center shadow-e3">
               <p className="type-headline text-headline-sm text-on-surface">{profile.name}</p>
               <p className="type-label mt-1 text-title-sm text-primary">
-                {profile.role} at {profile.company}
+                {profile.role}
               </p>
               <p className="mt-2 inline-flex items-center gap-1.5 text-body-sm text-on-surface-variant">
                 <MapPin className="h-4 w-4 shrink-0" />
