@@ -7,7 +7,9 @@
 export const profile = {
   name: 'Hieu Vu',
   shortName: 'Hieu',
-  role: 'Senior Software Engineer',
+  role: 'Senior Software Engineer, Android',
+  /** Current employer, shown after the role on the name card and footer. */
+  company: 'Grab',
   /** The specialty line under the title. */
   specialty: 'Android & Kotlin Multiplatform',
   location: 'Ho Chi Minh City, Vietnam',
